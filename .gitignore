@@ -1,0 +1,14 @@
+### macOS ###
+# General
+.DS_Store
+.vscode
+
+### Node ###
+# Dependency directories
+node_modules
+
+# Build folder
+build/**/*.js
+
+# dotenv environment variables file
+.env
