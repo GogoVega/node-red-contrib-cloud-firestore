@@ -54,7 +54,7 @@ cd ~/.node-red
 npm install @gogovega/node-red-contrib-cloud-firestore --omit=dev
 ```
 
-Rememeber to restart Node RED after using either method.
+Remember to restart Node RED after using either method.
 
 ## Authentication Methods
 
@@ -75,7 +75,7 @@ Read more about the different ways to authenticate [here](https://github.com/Gog
 - [Change Log](./CHANGELOG.md): Whats changed?
 
 > [!NOTE]
-> Not all links are active yet - just be patient :wink
+> Not all links are active yet - just be patient :wink:
 
 ## Feature Request
 
