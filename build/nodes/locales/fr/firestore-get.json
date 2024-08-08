@@ -1,0 +1,30 @@
+{
+  "firestore-get": {
+    "label": {
+      "database": "Database",
+      "referenceType": "Type",
+      "collection": "Collection",
+      "collectionGroup": "Groupe",
+      "document": "Document",
+      "sortData": "Trier ?",
+      "constraints": "Contraintes",
+      "passThrough": "PassThrough"
+    },
+    "reference": {
+      "none": "- définir dynamiquement -",
+      "collection": "Collection",
+      "collectionGroup": "Groupe de collections",
+      "document": "Document"
+    },
+    "useConstraints": "Souhaitez-vous trier et ordonner vos données ?",
+    "passThrough": "Si un message arrive, transmettre le message ?",
+    "tooltip": {
+      "referenceType": "Le type de référence que vous souhaitez lire"
+    },
+    "tips": {
+      "tips": "<strong>Astuces</strong> :",
+      "tip0": "Vous pouvez utiliser des contraintes pour la requête en définissant la propriété <code>msg.constraints</code>.",
+      "tip1": "Si <code>msg.constraints</code> est défini, les contraintes de la requête définies dans le noeuud seront remplacées par celles contenues dans le message."
+    }
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "firestore-in": {
+    "label": {
+      "database": "Database",
+      "referenceType": "Type",
+      "collection": "Collection",
+      "collectionGroup": "Group",
+      "document": "Document",
+      "sortData": "Sort?",
+      "constraints": "Constraints",
+      "filter": "Filter",
+      "passThrough": "PassThrough"
+    },
+    "reference": {
+      "none": "- set dynamically -",
+      "collection": "Collection",
+      "collectionGroup": "Collection Group",
+      "document": "Document"
+    },
+    "filter": {
+      "msg": "- use msg.filter -",
+      "none": "No",
+      "added": "Added document",
+      "modified": "Modified document",
+      "removed": "Removed document"
+    },
+    "useConstraints": "Do you want to sort and order your data?",
+    "passThrough": "If a message arrives, pass the message?",
+    "tooltip": {
+      "referenceType": "The type of reference you want to read"
+    }
+  },
+  "constraints": {
+    "label": {
+      "endAt": "End at",
+      "endBefore": "End before",
+      "orderBy": "Sort by",
+      "limitToFirst": "Limit to first",
+      "limitToLast": "Limit to last",
+      "offset": "Offset",
+      "select": "Selection",
+      "startAfter": "Start after",
+      "startAt": "Start at",
+      "where": "Where"
+    },
+    "placeholder": {
+      "path": "Path",
+      "value": "Value"
+    },
+    "addConstraint": "Add Query Constraint Set",
+    "direction": {
+      "asc": "Ascending",
+      "desc": "Descending"
+    },
+    "where-filter": {
+      "array-contains": "Array contains",
+      "in": "In",
+      "not-in": "Not in",
+      "array-contains-any": "Array contains any"
+    }
+  },
+  "validator": {
+    "errors": {
+      "contains-slash": "The CollectionGroup property path cannot contain the '/' character",
+      "contains-space-prop": "The __prop__ property path cannot contain spaces at the beginning or end of the path",
+      "empty-path-prop": "__prop__ : The __prop__ property path cannot be empty",
+      "invalid-bool": "The value of the defined property is not a valid boolean",
+      "invalid-bool-prop": "__prop__ : The value of the defined __prop__ property is not a valid boolean",
+      "invalid-num": "The value of the defined property is not a valid number",
+      "invalid-num-prop": "__prop__ : The value of the defined __prop__ property is not a valid number",
+      "invalid-path": "The value of the Path property is not valid",
+      "invalid-range": "The value of the defined property is not in a valid range",
+      "invalid-range-prop": "__prop__ : The value of the defined __prop__ property is not in a valid range",
+      "invalid-type": "The selected type is not or no longer valid, please select a valid type",
+      "invalid-type-prop": "__prop__ : The type of the defined __prop__ property is not or no longer valid, please select a valid type",
+      "no-integer": "The value of the defined property must be an integer",
+      "no-integer-prop": "__prop__ : The value of the defined __prop__ property must be an integer",
+      "no-object": "The value of the defined property must be an object"
+    }
+  }
+}

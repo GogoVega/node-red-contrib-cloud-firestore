@@ -1,0 +1,30 @@
+{
+  "firestore-get": {
+    "label": {
+      "database": "Database",
+      "referenceType": "Type",
+      "collection": "Collection",
+      "collectionGroup": "Group",
+      "document": "Document",
+      "sortData": "Sort?",
+      "constraints": "Constraints",
+      "passThrough": "PassThrough"
+    },
+    "reference": {
+      "none": "- set dynamically -",
+      "collection": "Collection",
+      "collectionGroup": "Collection Group",
+      "document": "Document"
+    },
+    "useConstraints": "Do you want to sort and order your data?",
+    "passThrough": "If a message arrives, pass the message?",
+    "tooltip": {
+      "referenceType": "The type of reference you want to read"
+    },
+    "tips": {
+      "tips": "<strong>Tips</strong>:",
+      "tip0": "You can use constraints for the query by setting the <code>msg.constraints</code> property.",
+      "tip1": "If <code>msg.constraints</code> is set, the query constraints defined in the node will be replaced by those contained in the message."
+    }
+  }
+}

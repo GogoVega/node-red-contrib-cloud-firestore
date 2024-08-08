@@ -1,0 +1,17 @@
+{
+  "firestore-out": {
+    "label": {
+      "database": "Database",
+      "collection": "Collection",
+      "document": "Document",
+      "queryMethod": "Méthode"
+    },
+    "queryMethod": {
+      "msg": "- utiliser msg.method -",
+      "set": "Définir/créer le document",
+      "update": "Mettre à jour le document",
+      "delete": "Supprimer le document"
+    },
+    "merge": "Souhaitez-vous fusionner les données ? ('Définir' uniquement)"
+  }
+}

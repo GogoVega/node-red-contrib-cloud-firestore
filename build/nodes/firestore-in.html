@@ -1,0 +1,213 @@
+<!--
+  Copyright 2023-2024 Gauthier Dandele
+
+  Licensed under the MIT License,
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  https://opensource.org/licenses/MIT.
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<!-- Load Scripts -->
+<script type="text/javascript" src="resources/@gogovega/node-red-contrib-cloud-firestore/common.js"></script>
+<script type="text/javascript" src="resources/@gogovega/node-red-contrib-cloud-firestore/constraints.js"></script>
+
+<script type="text/javascript">
+	"use strict";
+
+	(function () {
+		const editableConstraintsList = FirestoreQueryConstraintsContainer.editableConstraintsList.create();
+		const { generateToolTip, typedPathField, validators } = FirestoreUI;
+		const i18n = (key) => FirestoreUI._(key, "firestore-in");
+
+		RED.nodes.registerType("firestore-in", {
+			align: "left",
+			category: "Firestore",
+			color: "#1f88e6",
+			icon: "firebase.svg",
+			paletteLabel: "Firestore IN",
+			defaults: {
+				name: { value: "" },
+				database: { value: "", label: i18n("label.database"), type: "firebase-config", required: true },
+				collection: { value: "", label: i18n("label.collection"), validate: validators.typedInput("collectionType") },
+				collectionType: { value: "str", label: i18n("label.collection"), validate: validators.pathType() },
+				collectionGroup: { value: "", label: i18n("label.collectionGroup"), validate: validators.typedInput("collectionGroupType") },
+				collectionGroupType: { value: "str", label: i18n("label.collectionGroup"), validate: validators.pathType() },
+				constraints: { value: {}, label: i18n("label.constraints") },
+				document: { value: "", label: i18n("label.document"), validate: validators.typedInput("documentType") },
+				documentType: { value: "str", label: i18n("label.document"), validate: validators.pathType() },
+				filter: { value: "none", label: i18n("label.filter"), validate: validators.filter() },
+				inputs: { value: 0 },
+				passThrough: { value: false, label: i18n("label.passThrough"), validate: validators.boolean() },
+			},
+			inputs: 0,
+			outputs: 1,
+			label: function () {
+				return this.name;
+			},
+			labelStyle: function () {
+				return this.name ? "node_label_italic" : "";
+			},
+			oneditprepare: function () {
+				const collectionField = typedPathField.create("collection").modeByDefault("static");
+				const collectionGroupField = typedPathField.create("collectionGroup").modeByDefault("static").allowSlash(false);
+				const documentField = typedPathField.create("document").modeByDefault("static");
+
+				collectionField.build();
+				collectionGroupField.build();
+				documentField.build();
+
+				editableConstraintsList.build(this);
+
+				generateToolTip($("#node-input-referenceType"), i18n("tooltip.referenceType"));
+
+				$("#node-input-useConstraints").prop("checked", !!Object.keys(this.constraints).length).trigger("change");
+
+				const refSelect = $("#node-input-referenceType");
+				const referenceRow = $(".form-row-ref");
+				const collectionRow = $(".form-row-collection");
+				const collectionGroupRow = $(".form-row-collectionGroup");
+				const documentRow = $(".form-row-document");
+				refSelect.on("change", function () {
+					referenceRow.hide();
+
+					switch (refSelect.val()) {
+						case "collection":
+							collectionRow.show();
+							collectionField.dynamicallyAllowBlank(false);
+							break;
+						case "collectionGroup":
+							collectionGroupRow.show();
+							collectionGroupField.dynamicallyAllowBlank(false);
+							break;
+						case "document":
+							documentRow.show();
+							collectionField.dynamicallyAllowBlank(true);
+							break;
+						case "none":
+							// Dynamic
+							collectionRow.show();
+							collectionGroupRow.show();
+							documentRow.show();
+							collectionField.dynamicallyAllowBlank(true);
+							collectionGroupField.dynamicallyAllowBlank(true);
+							documentField.dynamicallyAllowBlank(true);
+							break;
+					}
+				});
+
+				// This selection is not saved by the node so get the value here
+				if ((this.document || this.collection) && this.collectionGroup) {
+					refSelect.val("none");
+				} else {
+					refSelect.val(this.document ? "document" : this.collectionGroup ? "collectionGroup" : "collection");
+				}
+				refSelect.trigger("change");
+			},
+			oneditsave: function () {
+				editableConstraintsList.saveItems();
+
+				// Ensure only needed paths are saved
+				const refType = $("#node-input-referenceType").val();
+				const collection = $("#node-input-collection");
+				const collectionType = $("#node-input-collectionType");
+				const collectionGroup = $("#node-input-collectionGroup");
+				const collectionGroupType = $("#node-input-collectionGroupType");
+				const document = $("#node-input-document");
+				const documentType = $("#node-input-documentType");
+				if (refType === "collection") {
+					collectionGroup.val("");
+					collectionGroupType.val("str");
+					document.val("");
+					documentType.val("str");
+				} else if (refType === "collectionGroup") {
+					collection.val("");
+					collectionType.val("str");
+					document.val("");
+					documentType.val("str");
+				} else if (refType === "document") {
+					collectionGroup.val("");
+					collectionGroupType.val("str");
+				}
+
+				const inputs = refType === "none" ? 1 : 0;
+				$("#node-input-inputs").val(inputs);
+			},
+			oneditresize: (size) => editableConstraintsList.reSize(size),
+		});
+	})();
+</script>
+
+<script type="text/html" data-template-name="firestore-in">
+	<div class="form-row">
+		<label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
+		<input type="text" id="node-input-name" style="width:70%;" />
+	</div>
+
+	<div class="form-row">
+		<label for="node-input-database"><i class="fa fa-database"></i> <span data-i18n="firestore-in.label.database"></span></label>
+		<input type="text" id="node-input-database" style="width:70%;" />
+	</div>
+
+	<div class="form-row">
+		<input type="hidden" id="node-input-inputs" />
+		<label for="node-input-referenceType"><i class="fa fa-bars"></i> <span data-i18n="firestore-in.label.referenceType"></span></label>
+		<select id="node-input-referenceType" style="width:70%;">
+			<option value="none" data-i18n="firestore-in.reference.none" disabled></option>
+			<option value="collection" data-i18n="firestore-in.reference.collection"></option>
+			<option value="collectionGroup" data-i18n="firestore-in.reference.collectionGroup"></option>
+			<option value="document" data-i18n="firestore-in.reference.document"></option>
+		</select>
+	</div>
+
+	<div class="form-row form-row-ref form-row-collection form-row-collectionGroup">
+		<label for="node-input-useConstraints"><i class="fa fa-sort"></i> <span data-i18n="firestore-in.label.sortData"></span></label>
+		<input type="checkbox" id="node-input-useConstraints" style="display:inline-block; width:15px; vertical-align:baseline;" />
+		<span data-i18n="firestore-in.useConstraints"></span>
+	</div>
+
+	<div class="form-row node-input-constraints-container-row">
+		<ol id="node-input-constraints-container"></ol>
+	</div>
+
+	<div class="form-row form-row-ref form-row-collection form-row-document">
+		<label for="node-input-collection"><i class="fa fa-sitemap"></i> <span data-i18n="firestore-in.label.collection"></span></label>
+		<input type="text" id="node-input-collection" style="width:70%;" />
+		<input type="hidden" id="node-input-collectionType" />
+	</div>
+
+	<div class="form-row form-row-ref form-row-collectionGroup">
+		<label for="node-input-collectionGroup"><i class="fa fa-sitemap"></i> <span data-i18n="firestore-in.label.collectionGroup"></span></label>
+		<input type="text" id="node-input-collectionGroup" style="width:70%;" />
+		<input type="hidden" id="node-input-collectionGroupType" />
+	</div>
+
+	<div class="form-row form-row-ref form-row-document">
+		<label for="node-input-document"><i class="fa fa-sitemap"></i> <span data-i18n="firestore-in.label.document"></span></label>
+		<input type="text" id="node-input-document" style="width:70%;" />
+		<input type="hidden" id="node-input-documentType" />
+	</div>
+
+	<div class="form-row form-row-ref form-row-collection form-row-collectionGroup">
+		<label for="node-input-filter"><i class="fa fa-sign-out"></i> <span data-i18n="firestore-in.label.filter"></span></label>
+		<select id="node-input-filter" style="width:70%;">
+			<option value="msg" data-i18n="firestore-in.filter.msg" disabled></option>
+			<option value="none" data-i18n="firestore-in.filter.none"></option>
+			<option value="added" data-i18n="firestore-in.filter.added"></option>
+			<option value="modified" data-i18n="firestore-in.filter.modified"></option>
+			<option value="removed" data-i18n="firestore-in.filter.removed"></option>
+		</select>
+	</div>
+
+	<div class="form-row">
+		<label for="node-input-passThrough"></label>
+		<input type="checkbox" id="node-input-passThrough" style="display:inline-block; width:15px; vertical-align:baseline;" />
+		<span data-i18n="firestore-in.passThrough"></span>
+	</div>
+</script>

@@ -1,0 +1,81 @@
+{
+  "firestore-in": {
+    "label": {
+      "database": "Database",
+      "referenceType": "Type",
+      "collection": "Collection",
+      "collectionGroup": "Groupe",
+      "document": "Document",
+      "sortData": "Trier ?",
+      "constraints": "Contraintes",
+      "filter": "Filtrer",
+      "passThrough": "PassThrough"
+    },
+    "reference": {
+      "none": "- définir dynamiquement -",
+      "collection": "Collection",
+      "collectionGroup": "Groupe de collections",
+      "document": "Document"
+    },
+    "filter": {
+      "msg": "- utiliser msg.filter -",
+      "none": "Non",
+      "added": "Document ajouté",
+      "modified": "Document modifié",
+      "removed": "Document supprimé"
+    },
+    "useConstraints": "Souhaitez-vous trier et ordonner vos données ?",
+    "passThrough": "Si un message arrive, transmettre le message ?",
+    "tooltip": {
+      "referenceType": "Le type de référence que vous souhaitez lire"
+    }
+  },
+  "constraints": {
+    "label": {
+      "endAt": "Terminer à",
+      "endBefore": "Terminer avant",
+      "orderBy": "Trier par",
+      "limitToFirst": "Limiter aux premiers",
+      "limitToLast": "Limiter aux derniers",
+      "offset": "Décalage (offset)",
+      "select": "Sélection",
+      "startAfter": "Commencer après",
+      "startAt": "Commencer à",
+      "where": "Où"
+    },
+    "placeholder": {
+      "path": "Chemin",
+      "value": "Valeur"
+    },
+    "addConstraint": "Ajouter une contrainte de requête",
+    "direction": {
+      "asc": "Croissant",
+      "desc": "Décroissant"
+    },
+    "where-filter": {
+      "array-contains": "Contient",
+      "in": "Dans",
+      "not-in": "Pas dans",
+      "array-contains-any": "Contient un des"
+    }
+  },
+  "validator": {
+    "errors": {
+      "contains-slash": "Le chemin de la propriété CollectionGroup ne pêut pas contenir le caractère '/'",
+      "contains-space-prop": "Le chemin de la propriété __prop__ ne pêut pas contenir d'espaces au début ou à la fin du chemin",
+      "empty-path-prop": "__prop__ : Le chemin de la propriété __prop__ ne peut pas être vide",
+      "invalid-bool": "La valeur de la propriété définie n'est pas un booléen valide",
+      "invalid-bool-prop": "__prop__ : La valeur de la propriété __prop__ définie n'est pas un booléen valide",
+      "invalid-num": "La valeur de la propriété définie n'est pas un nombre valide",
+      "invalid-num-prop": "__prop__ : La valeur de la propriété __prop__ définie n'est pas un nombre valide",
+      "invalid-path": "La valeur de la propriété Chemin n'est pas valide",
+      "invalid-range": "La valeur de la propriété définie n'est pas dans une plage valide",
+      "invalid-range-prop": "__prop__ : La valeur de la propriété __prop__ définie n'est pas dans une plage valide",
+      "invalid-type": "Le type sélectionné n'est pas ou plus valide, veuillez sélectionner un type valide",
+      "invalid-type-prop": "__prop__ : Le type de la propriété __prop__ n'est pas ou plus valide, veuillez sélectionner un type valide",
+      "no-integer": "La valeur de la propriété définie doit être un entier",
+      "no-integer-prop": "__prop__ : La valeur de la propriété __prop__ définie doit être un entier",
+      "no-object": "La valeur de la propriété définie doit être un objet"
+    }
+  }
+}
