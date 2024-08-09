@@ -371,7 +371,7 @@ class Firestore<Node extends FirestoreNode, Config extends FirestoreConfig = Nod
 			this.setStatus();
 		}
 
-		if (!this.isFirestoreInNode) this.setStatus("Query Done", 500);
+		if (!this.isFirestoreInNode(this.node)) this.setStatus("Query Done", 500);
 
 		if (
 			snapshot &&
