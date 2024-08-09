@@ -16,15 +16,14 @@
 
 import { NodeAPI, NodeMessage } from "node-red";
 import {
+	Constraint,
+	CollectionData,
 	DataSnapshot,
 	SetOptions,
 	QueryConfig,
 	QueryMethod,
 	Unsubscribe,
-	Constraint,
-	FieldValue,
-	CollectionData,
-	GeoPoint,
+	SpecialFieldValue,
 } from "@gogovega/firebase-config-node/firestore";
 import { ConfigNode, ServiceType } from "@gogovega/firebase-config-node/types";
 import { Entry, isFirebaseConfigNode } from "@gogovega/firebase-config-node/utils";
@@ -130,19 +129,24 @@ class Firestore<Node extends FirestoreNode, Config extends FirestoreConfig = Nod
 	 * Evaluates the payload message to replace reserved keywords (`ARRAY_UNION`, `ARRAY_REMOVE`, `DELETE`,
 	 * `GEO_POINT`, `TIMESTAMP`, `INCREMENT` and `DECREMENT`) with the corresponding field value.
 	 *
+	 * @remarks Keywords cannot be used inside an array. Recursive therefore only applies to objects.
+	 * See https://github.com/firebase/firebase-ios-sdk/issues/1164#issuecomment-384323764.
+	 *
 	 * @param payload The payload to be evaluated
 	 * @returns The payload evaluated
 	 */
 	protected evaluatePayloadForFieldValue(payload: unknown): object {
 		if (typeof payload !== "object" || !payload) throw new TypeError("msg.payload must be an object");
 
+		const fieldValue = new SpecialFieldValue(this.firestore!.client.admin!);
+
 		for (const [key, value] of Object.entries(payload)) {
 			switch (typeof value) {
 				case "string": {
 					if (/^\s*TIMESTAMP\s*$/.test(value)) {
-						(payload as Record<string, unknown>)[key] = FieldValue.serverTimestamp();
+						(payload as Record<string, unknown>)[key] = fieldValue.serverTimestamp();
 					} else if (/^\s*DELETE\s*$/.test(value)) {
-						(payload as Record<string, unknown>)[key] = FieldValue.delete();
+						(payload as Record<string, unknown>)[key] = fieldValue.delete();
 					} else if (/^\s*(?:INCREMENT|DECREMENT)\s*-?\d+\.?\d*\s*$/.test(value)) {
 						const deltaString = value.match(/-?\d+\.?\d*/)?.[0] || "";
 						const delta = Number(deltaString);
@@ -150,17 +154,18 @@ class Firestore<Node extends FirestoreNode, Config extends FirestoreConfig = Nod
 						if (Number.isNaN(delta)) throw new Error("The delta of increment function must be a valid number.");
 
 						const toOppose = /DECREMENT/.test(value);
-						(payload as Record<string, unknown>)[key] = FieldValue.increment(toOppose ? -delta : delta);
+						(payload as Record<string, unknown>)[key] = fieldValue.increment(toOppose ? -delta : delta);
 					}
 					continue;
 				}
 				case "object": {
+					if (value === null) continue;
 					if (Object.prototype.hasOwnProperty.call(value, "ARRAY_UNION")) {
-						(payload as Record<string, unknown>)[key] = FieldValue.arrayUnion(value["ARRAY_UNION"]);
+						(payload as Record<string, unknown>)[key] = fieldValue.arrayUnion(value["ARRAY_UNION"]);
 					} else if (Object.prototype.hasOwnProperty.call(value, "ARRAY_REMOVE")) {
-						(payload as Record<string, unknown>)[key] = FieldValue.arrayRemove(value["ARRAY_REMOVE"]);
+						(payload as Record<string, unknown>)[key] = fieldValue.arrayRemove(value["ARRAY_REMOVE"]);
 					} else if (Object.prototype.hasOwnProperty.call(value, "GEO_POINT")) {
-						(payload as Record<string, unknown>)[key] = new GeoPoint(
+						(payload as Record<string, unknown>)[key] = fieldValue.geoPoint(
 							value["GEO_POINT"].latitude,
 							value["GEO_POINT"].longitude
 						);
