@@ -1,0 +1,86 @@
+<!--
+  Copyright 2023-2024 Gauthier Dandele
+
+  Licensed under the MIT License,
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  https://opensource.org/licenses/MIT.
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<style>
+	.property-type {
+		float: right;
+	}
+</style>
+
+<script type="text/html" data-help-name="firestore-get">
+	<p>
+		Se connecte à une base de données Cloud Firestore et récupère les documents à partir du chemin spécifié. Vous
+		pouvez définir des contraintes pour la requête afin de trier et ordonner vos documents.
+	</p>
+	<h3>Entrées</h3>
+	<dl class="message-properties">
+		<dt class="optional">constraints<span class="property-type">objet</span></dt>
+		<dd>un objet contenant la ou les contraintes à appliquer à la requête.</dd>
+	</dl>
+	<h3>Sorties</h3>
+	<dl class="message-properties">
+		<dt>payload<span class="property-type">objet | nul</span></dt>
+		<dd>contient les données de votre requête provenant de la base de données.</dd>
+		<dt class="optional">payload.docs<span class="property-type">objet</span></dt>
+		<dd>contient les documents sous forme d'un objet pour la collection lue.</dd>
+		<dt class="optional">payload.size<span class="property-type">nombre</span></dt>
+		<dd>le nombre de documents contenu dans l'objet.</dd>
+		<dt class="optional">payload.changes<span class="property-type">tableau</span></dt>
+		<dd>contient les documents ajoutés/modifiés/supprimés.</dd>
+	</dl>
+	<h3>Détails</h3>
+	<p>Ce noeud lit les documents d'un chemin spécifié et les envoie dans un message.</p>
+	<p>
+		La <strong>Collection</strong>, le <strong>Groupe de collections</strong> et le <strong>Document</strong>
+		déterminent où les données seront lues. Ils peuvent être définis dans le noeud ou dynamiquement.
+	</p>
+	<p>Si vous lisez un document, <code>payload</code> sera le contenu de votre document. Sinon <code>payload</code>
+		contiendra les trois propriétés décrites ci-dessus.</p>
+	<p>
+		Vous pouvez définir des contraintes pour la requête afin de trier et d'ordonner vos données. Vous pouvez définir une
+		ou plusieurs des contraintes suivantes dans la propriété <code>msg.constraints</code> ou directement dans le noeud :
+	</p>
+	<ul>
+		<li><code>endAt</code><span class="property-type">divers</span></li>
+		<li><code>endBefore</code><span class="property-type">divers</span></li>
+		<li><code>limitToFirst</code><span class="property-type">nombre</span></li>
+		<li><code>limitToLast</code><span class="property-type">nombre</span></li>
+		<li><code>offset</code><span class="property-type">nombre</span></li>
+		<li><code>orderBy</code><span class="property-type">objet</span></li>
+		<li><code>select</code><span class="property-type">chaîne | tableau de chaînes</span></li>
+		<li><code>startAfter</code><span class="property-type">divers</span></li>
+		<li><code>startAt</code><span class="property-type">divers</span></li>
+		<li><code>where</code><span class="property-type">objet</span></li>
+	</ul>
+	<p>Le <code>msg.constraints</code> ressemblera à ceci :</p>
+	<pre>
+{
+  "limitToFirst": 5,
+  "orderBy": {
+    "fieldPath": "some-path",
+    "direction": "asc"
+  },
+  "where": {
+    "fieldPath": "some-path",
+    "filter": ">",
+    "value": 1
+  }
+}</pre>
+	<p>
+		Cliquer <a href="https://github.com/GogoVega/node-red-contrib-cloud-firestore/wiki/firestore-get">ici</a> 
+		pour en savoir plus sur l'utilisation de ce noeud.
+	</p>
+</script>

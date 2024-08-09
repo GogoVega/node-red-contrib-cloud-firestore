@@ -1,0 +1,83 @@
+<!--
+  Copyright 2023-2024 Gauthier Dandele
+
+  Licensed under the MIT License,
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  https://opensource.org/licenses/MIT.
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+
+<script type="text/html" data-help-name="firestore-out">
+	<p>Se connecte à une base de données Cloud Firestore et ajoute/modifie des données à/de la base de données.</p>
+	<h3>Entrées</h3>
+	<dl class="message-properties">
+		<dt>payload<span class="property-type">objet</span></dt>
+		<dd>les données qui seront envoyées à la base de données.</dd>
+		<dt class="optional">method<span class="property-type">chaîne de caractères</span></dt>
+		<dd>le type de requête à appliquer aux données (set, update ou delete).</dd>
+		<dt class="optional">options.merge<span class="property-type">booléen | tableau de chaînes</span></dt>
+		<dd>s'il faut fusionner les données ou fusionner uniquement les propriétés du tableau.</dd>
+	</dl>
+	<h3>Détails</h3>
+	<p>Ce noeud vous permet d'ajouter/modifier des données à/de la base de données.</p>
+	<ul>
+		<li><strong>Définir</strong> : écrase les données à chaque écriture (merge option dispo).</li>
+		<li><strong>Mettre à jour</strong> : mets à jour les valeurs pour chaque clé correspondante dans la base de données.</li>
+		<li><strong>Supprimer</strong> : les données de la référence Firebase et toutes les données enfants sont supprimées.</li>
+	</ul>
+	<p>
+		La <strong>Collection</strong> et le <strong>Document</strong> déterminent où les données seront écrites.
+		Ils peuvent être défini dans le noeud ou dynamiquement.
+	</p>
+	<p>
+		Le mot-clé réservé <code>"DELETE"</code> permet de supprimer une propriété et sa valeur de la base de données.
+		Il doit être écrit au format chaîne de caractères et peut être utilisé dans un objet.
+	</p>
+	<p>
+		Le mot-clé réservé <code>"TIMESTAMP"</code> permet d'utiliser l'horodatage de la base de données.
+		Il doit être écrit au format chaîne de caractères et peut être utilisé dans un objet.
+	</p>
+	<p>
+		Le mot-clé réservé <code>"INCREMENT [delta]"</code> précédé d'un entier positif ou négatif permet d'incrémenter
+		une valeur numérique d'un delta. Le mot-clé réservé <code>"DECREMENT [delta]"</code> existe également.
+		Il doit être écrit au format chaîne de caractères et peut être utilisé dans un objet.
+	</p>
+	<p>
+		Les mot-clés réservés <code>"ARRAY_UNION"</code> et <code>"ARRAY_REMOVE"</code> permet d'ajouter/supprimer
+		des données à la base de données. Ils doivent être écrit de la façon suivante et peuvent être utilisés dans un objet.
+	</p>
+	<pre>
+{
+  "my-array": {
+    "ARRAY_UNION": "value-to-add"
+  },
+}</pre>
+	<p>
+		Le mot-clé réservé <code>"GEO_POINT"</code> permet de créer un Geo Point dans la base de données.
+		Il doit être écrit de la façon suivante et peut être utilisé dans un objet.
+	</p>
+	<pre>
+{
+"my-geo-point": {
+  "GEO_POINT": {
+    "latitude": 25,
+    "longitude": 45
+  }
+},
+}</pre>
+	<p>
+		Tous les mot-clés réservés décrits ci-dessus <strong>ne peuvent PAS</strong> être utilisés dans un tableau.
+		C'est une limitation connue de Firestore.
+	</p>
+	<p>
+		Cliquer <a href="https://github.com/GogoVega/node-red-contrib-cloud-firestore/wiki/firestore-out">ici</a> 
+		pour en savoir plus sur l'utilisation de ce noeud.
+	</p>
+</script>
