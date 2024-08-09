@@ -32,11 +32,11 @@ It allows to add, modify and fetch data from your databases aswell as subscribin
 
 There are 3 nodes included with this contrib:
 
-| Node                | Purpose                                                                                                |
-| ------------------- | ------------------------------------------------------------------------------------------------------ |
-| Firestore&nbsp;IN   | Subscribes to data at the specified path,<br /> which yields a `payload` whenever a value changes.     |
-| Firestore&nbsp;GET  | Fetches data from the specified path.<br />Query constraints can be used to sort and order your data.  |
-| Firestore&nbsp;OUT  | `SET`, `UPDATE` or `DELETE` data at the target Database.                                               |
+| Node               | Purpose                                                                                               |
+| ------------------ | ----------------------------------------------------------------------------------------------------- |
+| Firestore&nbsp;IN  | Subscribes to data at the specified path,<br /> which yields a `payload` whenever a value changes.    |
+| Firestore&nbsp;GET | Fetches data from the specified path.<br />Query constraints can be used to sort and order your data. |
+| Firestore&nbsp;OUT | `SET`, `UPDATE` or `DELETE` data at the target Database.                                              |
 
 On the video above, we can see the "Query Constraint" feature, which is used to sort and order your data as required, and also shown is the "Drag and drop JSON file" feature, which automatically populates the fields with the content of the JSON file you provide.
 
@@ -70,6 +70,7 @@ Read more about the different ways to authenticate [here](https://github.com/Gog
 - [Installing](https://github.com/GogoVega/node-red-contrib-cloud-firestore/wiki/getting-started): System requirements and install instructions
 - [Build Database](https://github.com/GogoVega/node-red-contrib-cloud-firestore/wiki/create-database): How to build a Firestore database?
 - [Authentication Methods](https://github.com/GogoVega/node-red-contrib-firebase-realtime-database/wiki/Authentication#authentication-methods): Which method used to connect?
+- [RTDB](https://github.com/GogoVega/node-red-contrib-firebase-realtime-database): You search for the Firebase RealTime DataBases?
 - [Wiki](https://github.com/GogoVega/node-red-contrib-cloud-firestore/wiki): Just about everything
 - [Firebase Site](https://firebase.google.com/): What is Firebase?
 - [Change Log](./CHANGELOG.md): Whats changed?
