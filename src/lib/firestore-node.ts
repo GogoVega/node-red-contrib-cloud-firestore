@@ -215,6 +215,7 @@ class Firestore<Node extends FirestoreNode, Config extends FirestoreConfig = Nod
 		if (this.isFirestoreOutNode(this.node))
 			throw new Error("Invalid call to 'getQueryConstraints' by Firestore OUT node");
 
+		// TODO: Type Guards
 		if (msg?.constraints) return msg.constraints;
 
 		const constraints: Constraint = {};
@@ -230,10 +231,11 @@ class Firestore<Node extends FirestoreNode, Config extends FirestoreConfig = Nod
 					const typesAllowed: Array<typeof value.valueType> = [
 						"bool",
 						"date",
+						"env",
 						"flow",
 						"global",
+						"json",
 						"jsonata",
-						"env",
 						"msg",
 						"null",
 						"num",
@@ -273,7 +275,15 @@ class Firestore<Node extends FirestoreNode, Config extends FirestoreConfig = Nod
 					break;
 				}
 				case "select": {
-					const typesAllowed: Array<typeof value.valueType> = ["flow", "global", "jsonata", "env", "msg", "str"];
+					const typesAllowed: Array<typeof value.valueType> = [
+						"flow",
+						"global",
+						"jsonata",
+						"env",
+						"msg",
+						"str",
+						"json",
+					];
 					if (!typesAllowed.includes(value.valueType))
 						throw new Error(`Invalid type (${value.valueType}) for the ${key} field. Please reconfigure this node.`);
 
@@ -289,10 +299,11 @@ class Firestore<Node extends FirestoreNode, Config extends FirestoreConfig = Nod
 					const valueTypesAllowed: Array<typeof value.valueType> = [
 						"bool",
 						"date",
+						"env",
 						"flow",
 						"global",
+						"json",
 						"jsonata",
-						"env",
 						"msg",
 						"null",
 						"num",
