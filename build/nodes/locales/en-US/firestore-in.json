@@ -8,7 +8,7 @@
       "document": "Document",
       "sortData": "Sort?",
       "constraints": "Constraints",
-      "filter": "Filter",
+      "filter": "Filter?",
       "passThrough": "PassThrough"
     },
     "reference": {

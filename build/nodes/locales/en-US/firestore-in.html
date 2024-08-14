@@ -48,13 +48,19 @@
 		<strong>Document</strong> determine where the data will be read. They can be set
 		in the node or dynamically.
 	</p>
-	<p>If you are reading a document, <code>payload</code> will be the content of
+	<p>
+		If you are reading a document, <code>payload</code> will be the content of
 		your document. Otherwise <code>payload</code> will contain the three properties
-		described above.</p>
+		described above.
+	</p>
 	<p>
 		You can define constraints for the query to sort and order your data. You can
 		define one or more of the following constraints in the <code>msg.constraints</code>
 		property or directly in the node:
+	</p>
+	<p>
+		The <strong>Filter</strong> filters <code>payload.changes</code> to keep only the documents
+		whose change type matches the applied filter.
 	</p>
 	<ul>
 		<li><code>endAt</code><span class="property-type">various</span></li>
