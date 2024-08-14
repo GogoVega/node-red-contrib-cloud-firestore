@@ -38,7 +38,37 @@ var FirestoreQueryConstraintsContainer = FirestoreQueryConstraintsContainer || (
 	const dynamicFieldTypes = ["msg", "flow", "global", "jsonata", "env"];
 	const limitFieldTypes = [{ value: "num", label: "number", icon: "red/images/typedInput/09.svg", validate: validators.limit() }, ...dynamicFieldTypes];
 	const rangeFieldTypes = ["bool", "num", "str", "date", { value: "null", label: "null", hasValue: false }, "json", ...dynamicFieldTypes];
-	const selectFieldTypes = ["str", "json", ...dynamicFieldTypes];// TODO: Custom array of string
+
+	const stringArrayFieldType = {
+		value: "array",
+		label: "String Array",
+		icon: "resources/@gogovega/node-red-contrib-cloud-firestore/array-brackets.svg",
+		validate: isSelectValueValid,
+		expand: function () {
+			const that = this;
+			let value = this.value();
+
+			try {
+				value = JSON.stringify(JSON.parse(value), null, 4);
+			} catch (_error) { }
+
+			RED.editor.editJSON({
+				value: value,
+				stateId: RED.editor.generateViewStateId("typedInput", that, "array"),
+				focus: true,
+				complete: function (val) {
+					let value = val;
+
+					try {
+						value = JSON.stringify(JSON.parse(val));
+					} catch (_error) { }
+
+					that.value(value);
+				},
+			});
+		},
+	};
+	const selectFieldTypes = ["str", stringArrayFieldType, ...dynamicFieldTypes];
 
 	class EditableQueryConstraintsList {
 		constructor() {
@@ -135,9 +165,16 @@ var FirestoreQueryConstraintsContainer = FirestoreQueryConstraintsContainer || (
 
 						node.constraints[constraintType] = { path: path, pathType: pathType, direction: options };
 						break;
-					case "select":
-						node.constraints[constraintType] = { value: value, valueType: valueType };
+					case "select": {
+						const result = isSelectValueValid(value, {});
+						if (result !== true) {
+							RED.notify(`Query Constraints: ${result}`, "error");
+						}
+
+						// The `array` type is a minimal `json` type restricted to a string array
+						node.constraints[constraintType] = { value: value, valueType: valueType === "array" ? "json" : valueType };
 						break;
+					}
 					case "where":
 						if (pathType === "str" && validators.path()(path) !== true) RED.notify("Query Constraints: Setted value is not a valid path!", "error");
 
@@ -212,6 +249,23 @@ var FirestoreQueryConstraintsContainer = FirestoreQueryConstraintsContainer || (
 	}
 
 	// TODO: validateConstraints
+	function isSelectValueValid (val, opt) {
+		let result = RED.utils.validateTypedProperty(val, "json", opt);
+
+		if (result !== true) return result;
+
+		try {
+			const value = JSON.parse(val);
+
+			if (!Array.isArray(value)) return i18n("validator.invalid-string-array");
+
+			for (const v of value) {
+				if (typeof v !== "string") return i18n("validator.invalid-string-array");
+			}
+		} catch (_error) { }
+
+		return true;
+	}
 
 	function updateTypeOfTypedInput(value, valueField, pathField, optionsField, pathContainer) {
 		// Initial state

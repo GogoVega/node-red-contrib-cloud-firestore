@@ -64,6 +64,11 @@ interface OrderBy {
 
 interface Select {
 	value: string;
+
+	/**
+	 * The `array` type used in the editor is a minimal version of the `json` type that only accepts
+	 * an array of strings. That's why the `json` type is used here to convert the value.
+	 */
 	valueType: DynamicTypedInputType | "str" | "json";
 }
 

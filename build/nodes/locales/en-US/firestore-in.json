@@ -62,6 +62,9 @@
       "in": "In",
       "not-in": "Not in",
       "array-contains-any": "Array contains any"
+    },
+    "validator": {
+      "invalid-string-array": "The value is not a valid string array"
     }
   },
   "validator": {
