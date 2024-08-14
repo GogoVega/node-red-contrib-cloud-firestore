@@ -41,7 +41,7 @@ var FirestoreQueryConstraintsContainer = FirestoreQueryConstraintsContainer || (
 
 	const stringArrayFieldType = {
 		value: "array",
-		label: "String Array",
+		label: i18n("typedInput.array"),
 		icon: "resources/@gogovega/node-red-contrib-cloud-firestore/array-brackets.svg",
 		validate: isSelectValueValid,
 		expand: function () {

@@ -63,6 +63,9 @@
       "not-in": "Pas dans",
       "array-contains-any": "Contient un des"
     },
+    "typedInput": {
+      "array": "tableau de chaînes"
+    },
     "validator": {
       "invalid-string-array": "La valeur n'est pas un tableau de chaînes valide"
     }

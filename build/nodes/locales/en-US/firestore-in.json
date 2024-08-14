@@ -63,6 +63,9 @@
       "not-in": "Not in",
       "array-contains-any": "Array contains any"
     },
+    "typedInput": {
+      "array": "string array"
+    },
     "validator": {
       "invalid-string-array": "The value is not a valid string array"
     }
