@@ -12,6 +12,10 @@
       "update": "Update Document",
       "delete": "Delete Document"
     },
-    "merge": "Do you want to merge data? ('Set' only)"
+    "merge": "Do you want to merge data? ('Set' only)",
+    "placeholder": {
+      "collection": "Collection path",
+      "document": "Document path"
+    }
   }
 }

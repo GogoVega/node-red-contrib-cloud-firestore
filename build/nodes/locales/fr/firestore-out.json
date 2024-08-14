@@ -12,6 +12,10 @@
       "update": "Mettre à jour le document",
       "delete": "Supprimer le document"
     },
-    "merge": "Souhaitez-vous fusionner les données ? ('Définir' uniquement)"
+    "merge": "Souhaitez-vous fusionner les données ? ('Définir' uniquement)",
+    "placeholder": {
+      "collection": "Chemin de la collection",
+      "document": "Chemin du document"
+    }
   }
 }

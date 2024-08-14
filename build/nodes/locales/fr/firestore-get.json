@@ -18,6 +18,11 @@
     },
     "useConstraints": "Souhaitez-vous trier et ordonner vos données ?",
     "passThrough": "Si un message arrive, transmettre le message ?",
+    "placeholder": {
+      "collection": "Chemin de la collection",
+      "collectionGroup": "ID de la collection",
+      "document": "Chemin du document"
+    },
     "tooltip": {
       "referenceType": "Le type de référence que vous souhaitez lire"
     },

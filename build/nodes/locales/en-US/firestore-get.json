@@ -18,6 +18,11 @@
     },
     "useConstraints": "Do you want to sort and order your data?",
     "passThrough": "If a message arrives, pass the message?",
+    "placeholder": {
+      "collection": "Collection path",
+      "collectionGroup": "Collection ID",
+      "document": "Document path"
+    },
     "tooltip": {
       "referenceType": "The type of reference you want to read"
     },
