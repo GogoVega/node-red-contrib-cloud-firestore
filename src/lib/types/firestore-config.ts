@@ -85,12 +85,12 @@ interface Constraint {
 	endBefore?: FieldValues;
 	limitToFirst?: Limit;
 	limitToLast?: Limit;
-	orderBy?: OrderBy;
+	orderBy?: Array<OrderBy>;
 	offset?: Offset;
 	select?: Select;
 	startAfter?: FieldValues;
 	startAt?: FieldValues;
-	where?: Where;
+	where?: Array<Where>;
 }
 
 export type DocumentChangeType = "added" | "removed" | "modified";

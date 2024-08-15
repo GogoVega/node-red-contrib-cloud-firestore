@@ -91,7 +91,18 @@ var FirestoreQueryConstraintsContainer = FirestoreQueryConstraintsContainer || (
 
 		#constraintsHandler() {
 			if (this.useConstraints?.prop("checked") === true) {
-				const constraints = Object.entries(this.node.constraints || {});
+				const constraints = Object.entries(this.node.constraints || {}).reduce((array, [type, value]) => {
+					// For `orderBy` or `where`
+					if (Array.isArray(value)) {
+						value.forEach((val) => {
+							array.push([type, val]);
+						});
+					} else {
+						array.push([type, value]);
+					}
+
+					return array;
+				}, []);
 
 				if (!constraints.length) constraints.push(["limitToLast", { value: "5", valueType: "num" }]);
 
@@ -163,7 +174,8 @@ var FirestoreQueryConstraintsContainer = FirestoreQueryConstraintsContainer || (
 					case "orderBy":
 						if (pathType === "str" && validators.path()(path) !== true) RED.notify("Query Constraints: Setted value is not a valid path!", "error");
 
-						node.constraints[constraintType] = { path: path, pathType: pathType, direction: options };
+						node.constraints[constraintType] ||= [];
+						node.constraints[constraintType].push({ path: path, pathType: pathType, direction: options });
 						break;
 					case "select": {
 						const result = isSelectValueValid(value, {});
@@ -178,7 +190,8 @@ var FirestoreQueryConstraintsContainer = FirestoreQueryConstraintsContainer || (
 					case "where":
 						if (pathType === "str" && validators.path()(path) !== true) RED.notify("Query Constraints: Setted value is not a valid path!", "error");
 
-						node.constraints[constraintType] = { path: path, pathType: pathType, value: value, valueType: valueType, filter: options };
+						node.constraints[constraintType] ||= [];
+						node.constraints[constraintType].push({ path: path, pathType: pathType, value: value, valueType: valueType, filter: options });
 						break;
 				}
 			});
