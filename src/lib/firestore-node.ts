@@ -41,6 +41,7 @@ import {
 	NodeConfig,
 	OutgoingMessage,
 } from "./types";
+import { checkConfigNodeSatisfiesVersion } from "./utils";
 
 class Firestore<Node extends FirestoreNode, Config extends FirestoreConfig = NodeConfig<Node>> {
 	private readonly serviceType: ServiceType = "firestore";
@@ -77,6 +78,15 @@ class Firestore<Node extends FirestoreNode, Config extends FirestoreConfig = Nod
 
 		if (!isFirebaseConfigNode(node.database) && node.database)
 			throw new Error("The selected database is not compatible with this module, please check your config-node");
+
+		if (node.database) {
+			if (!checkConfigNodeSatisfiesVersion(RED, node.database.version)) {
+				node.status({ fill: "red", shape: "ring", text: "Invalid Database Version!" });
+
+				// To avoid initializing the database (avoid creating unhandled errors)
+				node.database = null;
+			}
+		}
 	}
 
 	/**
