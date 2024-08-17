@@ -261,17 +261,28 @@ class Firestore<Node extends FirestoreNode, Config extends FirestoreConfig = Nod
 					break;
 				}
 				case "orderBy": {
-					const typesAllowed: Array<typeof value.pathType> = ["flow", "global", "jsonata", "env", "msg", "str"];
-					if (!typesAllowed.includes(value.pathType))
-						throw new Error(`Invalid type (${value.pathType}) for the ${key} field. Please reconfigure this node.`);
+					const typesAllowed = ["flow", "global", "jsonata", "env", "msg", "str"];
+					let valArray = value;
 
-					constraints[key] = {
-						fieldPath: await this.evaluateNodeProperty(value.path, value.pathType, this.node, msg),
-						direction: value.direction,
-					};
+					// Ensure it's an array - v < 0.0.2
+					if (!Array.isArray(value)) {
+						valArray = [value];
+					}
 
-					if (typeof constraints[key].fieldPath !== "string")
-						throw new TypeError("The OrderBy fieldPath value of Query Constraints must be a string.");
+					for (const [index, val] of valArray.entries()) {
+						if (!typesAllowed.includes(val.pathType))
+							throw new Error(`Invalid type (${val.pathType}) for the ${key} field. Please reconfigure this node.`);
+
+						constraints[key] ||= [];
+						constraints[key][index] = {
+							fieldPath: await this.evaluateNodeProperty(val.path, val.pathType, this.node, msg),
+							direction: val.direction,
+						};
+
+						if (typeof constraints[key][index].fieldPath !== "string")
+							throw new TypeError("The OrderBy fieldPath value of Query Constraints must be a string.");
+					}
+
 					break;
 				}
 				case "select": {
@@ -296,7 +307,7 @@ class Firestore<Node extends FirestoreNode, Config extends FirestoreConfig = Nod
 					break;
 				}
 				case "where": {
-					const valueTypesAllowed: Array<typeof value.valueType> = [
+					const valueTypesAllowed = [
 						"bool",
 						"date",
 						"env",
@@ -309,20 +320,31 @@ class Firestore<Node extends FirestoreNode, Config extends FirestoreConfig = Nod
 						"num",
 						"str",
 					];
-					const pathTypesAllowed: Array<typeof value.pathType> = ["flow", "global", "jsonata", "env", "msg", "str"];
-					if (!valueTypesAllowed.includes(value.valueType))
-						throw new Error(`Invalid type (${value.valueType}) for the ${key} field. Please reconfigure this node.`);
-					if (!pathTypesAllowed.includes(value.pathType))
-						throw new Error(`Invalid type (${value.pathType}) for the ${key} field. Please reconfigure this node.`);
+					const pathTypesAllowed = ["flow", "global", "jsonata", "env", "msg", "str"];
+					let valArray = value;
 
-					constraints[key] = {
-						fieldPath: await this.evaluateNodeProperty(value.path, value.pathType, this.node, msg),
-						filter: value.filter,
-						value: await this.evaluateNodeProperty(value.value, value.valueType, this.node, msg),
-					};
+					// Ensure it's an array - v < 0.0.2
+					if (!Array.isArray(value)) {
+						valArray = [value];
+					}
 
-					if (typeof constraints[key].fieldPath !== "string")
-						throw new TypeError("The Where fieldPath value of Query Constraints must be a string.");
+					for (const [index, val] of valArray.entries()) {
+						if (!valueTypesAllowed.includes(val.valueType))
+							throw new Error(`Invalid type (${val.valueType}) for the ${key} field. Please reconfigure this node.`);
+						if (!pathTypesAllowed.includes(val.pathType))
+							throw new Error(`Invalid type (${val.pathType}) for the ${key} field. Please reconfigure this node.`);
+
+						constraints[key] ||= [];
+						constraints[key][index] = {
+							fieldPath: await this.evaluateNodeProperty(val.path, val.pathType, this.node, msg),
+							filter: val.filter,
+							value: await this.evaluateNodeProperty(val.value, val.valueType, this.node, msg),
+						};
+
+						if (typeof constraints[key][index].fieldPath !== "string")
+							throw new TypeError("The Where fieldPath value of Query Constraints must be a string.");
+					}
+
 					break;
 				}
 			}

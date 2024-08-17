@@ -64,25 +64,25 @@
 		<li><code>limitToFirst</code><span class="property-type">number</span></li>
 		<li><code>limitToLast</code><span class="property-type">number</span></li>
 		<li><code>offset</code><span class="property-type">number</span></li>
-		<li><code>orderBy</code><span class="property-type">object</span></li>
+		<li><code>orderBy</code><span class="property-type">array</span></li>
 		<li><code>select</code><span class="property-type">string | string array</span></li>
 		<li><code>startAfter</code><span class="property-type">various</span></li>
 		<li><code>startAt</code><span class="property-type">various</span></li>
-		<li><code>where</code><span class="property-type">object</span></li>
+		<li><code>where</code><span class="property-type">array</span></li>
 	</ul>
 	<p>The <code>msg.constraints</code> will look like this:</p>
 	<pre>
 {
   "limitToFirst": 5,
-  "orderBy": {
+  "orderBy": [{
     "fieldPath": "some-path",
     "direction": "asc"
-  },
-  "where": {
+  }],
+  "where": [{
     "fieldPath": "some-path",
     "filter": ">",
     "value": 1
-  }
+  }]
 }</pre>
 	<p>
 		Click <a href="https://github.com/GogoVega/node-red-contrib-cloud-firestore/wiki/firestore-get">here</a>
