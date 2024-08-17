@@ -1,0 +1,37 @@
+name: Tests
+
+on:
+  push:
+    paths-ignore:
+      - 'assets/**'
+      - 'examples/**'
+  pull_request:
+    branches:
+      - master
+      - dev
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Lint
+        run: npm run lint
+
+      - name: Run Build
+        run: npm run build
+
+			# TODO: Run tests
