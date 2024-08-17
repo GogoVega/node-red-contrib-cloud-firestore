@@ -19,7 +19,7 @@ import { NodeAPI } from "node-red";
 /**
  * The required version of the {@link https://github.com/GogoVega/Firebase-Config-Node | Config Node}.
  */
-const requiredVersion = [0, 1, 1];
+const requiredVersion = [0, 1, 2];
 
 /**
  * This flag prevents emitting an error log for each Firestore node.
