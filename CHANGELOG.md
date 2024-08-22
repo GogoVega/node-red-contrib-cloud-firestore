@@ -1,5 +1,12 @@
 # Change log
 
+## 0.0.3
+
+### Changes
+
+- Improve Config Node version checking (#4)
+- Bump `@gogovega/firebase-config-node` from 0.1.2 to 0.1.3
+
 ## 0.0.2
 
 ### Changes
