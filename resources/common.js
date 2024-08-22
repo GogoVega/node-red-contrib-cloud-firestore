@@ -249,34 +249,8 @@ var FirestoreUI = FirestoreUI || (function () {
 		return RED._(`@gogovega/node-red-contrib-cloud-firestore/${dict}:${group || dict}.${key}`, tplStrs);
 	}
 
-	// --- Firebase Config Node Part ---
-	function generateNotification() {
-		const msg = `
-			<html>
-				<p>Welcome to Google Cloud Firestore</p>
-				<p>To use this palette of nodes, please restart Node-RED. If you are using FlowFuse, suspend then start the instance.</p>
-				<p>If you have installed from the Manage Palette you need to restart because Node-RED did not load all nodes correctly.</p>
-				<p>Read more about this issue <a href="https://github.com/GogoVega/node-red-contrib-firebase-realtime-database/discussions/50">here</a>.</p>
-			</html>`;
-
-		const myNotification = RED.notify(msg, {
-			type: "warning",
-			fixed: true,
-			modal: true,
-			buttons: [{
-				text: "Close",
-				class: "primary",
-				click: () => {
-					myNotification.close();
-				}
-			}],
-		});
-	}
-
-	// Config Node not loaded, so the user must restart NR
-	if (!RED.nodes.getType("firebase-config")) {
-		generateNotification();
-	}
+	// Check the Firebase Config Node
+	$.getScript("resources/@gogovega/node-red-contrib-cloud-firestore/config-node.js");
 
 	return {
 		_: i18nFullOptions,
