@@ -22,7 +22,7 @@
 <br />
 
 > [!CAUTION]
- > **BREAKING CHANGES**: v0.1.0: the required version of Node.js is now >=18
+> **BREAKING CHANGES**: v0.1.0: the required version of Node.js is now >=18
 
 ## What is it?
 
