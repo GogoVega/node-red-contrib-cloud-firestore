@@ -105,12 +105,10 @@ class Firestore<Node extends FirestoreNode, Config extends FirestoreConfig = Nod
 		if (!node.database) {
 			node.error("Database not configured or disabled!");
 			node.status({ fill: "red", shape: "ring", text: "Database not ready!" });
-		}
+		} else {
+			if (!isFirebaseConfigNode(node.database))
+				throw new Error("The selected database is not compatible with this module, please check your config-node");
 
-		if (!isFirebaseConfigNode(node.database) && node.database)
-			throw new Error("The selected database is not compatible with this module, please check your config-node");
-
-		if (node.database) {
 			if (!checkConfigNodeSatisfiesVersion(RED, node.database.version)) {
 				node.status({ fill: "red", shape: "ring", text: "Invalid Database Version!" });
 
