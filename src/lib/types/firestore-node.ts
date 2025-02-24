@@ -25,7 +25,7 @@ interface QueryOptions {
 
 export interface IncomingMessage extends NodeMessageInFlow {
 	constraints?: Constraint;
-	filter?: DocumentChangeType;
+	filter?: DocumentChangeType | "reset";
 	method?: QueryMethod;
 	options?: QueryOptions;
 }
