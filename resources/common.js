@@ -50,10 +50,16 @@ var FirestoreUI = FirestoreUI || (function () {
 			options = Object.assign({ allowBlank: false, allowSlash: true }, options);
 			const regex = options.allowBlank ? /^\s|\s$|\/{2,}/ : /^$|^\s|\s$|\/{2,}/;
 			return function (value, opt) {
-				if (!options.allowSlash && typeof value === "string" && /[\/]/.test(value)) return opt ? i18n("errors.contains-slash") : false;
-				if (typeof value === "string" && !regex.test(value)) return true;
-				if (!options.allowBlank && !value) return opt ? i18n("errors.empty-path-prop", { prop: opt.label }) : false;
-				if (/^\s|\s$/.test(value)) return opt ? i18n("errors.contains-space-prop", { prop: opt.label }) : false;
+				// TODO: Remove the default label - need to handle it into the NR core
+				if (opt && !opt.label) { opt.label = FirestoreUI._("placeholder.path", "firestore-in", "constraints"); }
+				if (!options.allowSlash && typeof value === "string" && /[\/]/.test(value))
+					return opt ? i18n("errors.contains-slash") : false;
+				if (typeof value === "string" && !regex.test(value))
+					return true;
+				if (!options.allowBlank && !value)
+					return opt ? i18n("errors.empty-path-prop", { prop: opt.label }) : false;
+				if (/^\s|\s$/.test(value))
+					return opt ? i18n("errors.contains-space-prop", { prop: opt.label }) : false;
 				return opt ? i18n("errors.invalid-path-prop", { prop: opt.label }) : false;
 			};
 		},
