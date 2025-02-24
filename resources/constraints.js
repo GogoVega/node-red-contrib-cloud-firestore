@@ -24,6 +24,10 @@ var FirestoreQueryConstraintsContainer = FirestoreQueryConstraintsContainer || (
 
 	const { validators } = FirestoreUI;
 
+	const i18n = function (key, options) {
+		return FirestoreUI._(key, "firestore-in", "constraints", options);
+	};
+
 	const queryConstraintTypes = ["endAt", "endBefore", "limitToFirst", "limitToLast", "orderBy", "offset", "select", "startAfter", "startAt", "where"];
 	const queryConstraintFieldOptions = queryConstraintTypes.map((fieldName) => (
 		{ value: fieldName, label: i18n(`label.${fieldName}`) }
@@ -319,10 +323,6 @@ var FirestoreQueryConstraintsContainer = FirestoreQueryConstraintsContainer || (
 				pathContainer.css("padding-top", "5px");
 				break;
 		}
-	}
-
-	function i18n(key, options) {
-		return RED._(`@gogovega/node-red-contrib-cloud-firestore/firestore-in:constraints.${key}`, options);
 	}
 
 	return {

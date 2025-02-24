@@ -17,6 +17,10 @@
 var FirestoreUI = FirestoreUI || (function () {
 	"use strict";
 
+	const i18n = function (key, tplStrs) {
+		return FirestoreUI._(key, "firestore-in", "validator", tplStrs);
+	};
+
 	const validators = {
 		boolean: function () {
 			return function (value, opt) {
@@ -190,7 +194,7 @@ var FirestoreUI = FirestoreUI || (function () {
 		 * @returns {TypedPathInput}
 		 */
 		enableAutoComplete() {
-			// TODO
+			// TODO: Autocomplete
 			//this._autoComplete = { autoComplete: autoComplete() };
 			return this;
 		}
@@ -235,10 +239,6 @@ var FirestoreUI = FirestoreUI || (function () {
 
     $(element).parent().append(tip);
   }
-
-	function i18n(key, tplStrs) {
-		return RED._(`@gogovega/node-red-contrib-cloud-firestore/firestore-in:validator.${key}`, tplStrs);
-	}
 
 	function i18nFullOptions(key, dict, group = "", tplStrs) {
 		if (typeof group === "object" && !tplStrs) {

@@ -49,7 +49,38 @@ class Firestore<Node extends FirestoreNode, Config extends FirestoreConfig = Nod
 	/**
 	 * Incoming msg is needed for this types
 	 */
-	protected dynamicFieldTypes = ["flow", "global", "jsonata", "msg"];
+	protected static dynamicFieldTypes = ["flow", "global", "jsonata", "msg"];
+
+	protected static limitFieldTypes = ["flow", "global", "jsonata", "env", "msg", "num"];
+	protected static orderFieldTypes = ["flow", "global", "jsonata", "env", "msg", "str"];
+	protected static pathFieldTypes = ["flow", "global", "jsonata", "env", "msg", "str"];
+	protected static rangeFieldTypes = [
+		"bool",
+		"date",
+		"env",
+		"flow",
+		"global",
+		"json",
+		"jsonata",
+		"msg",
+		"null",
+		"num",
+		"str",
+	];
+	protected static selectFieldTypes = ["flow", "global", "jsonata", "env", "msg", "str", "json"];
+	protected static whereFieldTypes = [
+		"bool",
+		"date",
+		"env",
+		"flow",
+		"global",
+		"json",
+		"jsonata",
+		"msg",
+		"null",
+		"num",
+		"str",
+	];
 
 	/**
 	 * This property contains the identifier of the timer used to define the error status of the node and will be used
@@ -74,12 +105,10 @@ class Firestore<Node extends FirestoreNode, Config extends FirestoreConfig = Nod
 		if (!node.database) {
 			node.error("Database not configured or disabled!");
 			node.status({ fill: "red", shape: "ring", text: "Database not ready!" });
-		}
+		} else {
+			if (!isFirebaseConfigNode(node.database))
+				throw new Error("The selected database is not compatible with this module, please check your config-node");
 
-		if (!isFirebaseConfigNode(node.database) && node.database)
-			throw new Error("The selected database is not compatible with this module, please check your config-node");
-
-		if (node.database) {
 			if (!checkConfigNodeSatisfiesVersion(RED, node.database.version)) {
 				node.status({ fill: "red", shape: "ring", text: "Invalid Database Version!" });
 
@@ -97,12 +126,12 @@ class Firestore<Node extends FirestoreNode, Config extends FirestoreConfig = Nod
 	}
 
 	public attachStatusListener() {
-		this.node.database?.addStatusListener(this.node.id, this.serviceType);
+		this.node.database?.addStatusListener(this.node, this.serviceType);
 	}
 
 	public detachStatusListener(done: () => void) {
 		if (this.node.database) {
-			this.node.database.removeStatusListener(this.node.id, this.serviceType, done);
+			this.node.database.removeStatusListener(this.node, this.serviceType, done);
 		} else {
 			done();
 		}
@@ -124,7 +153,7 @@ class Firestore<Node extends FirestoreNode, Config extends FirestoreConfig = Nod
 		msg?: IncomingMessage
 	): Promise<T> {
 		return new Promise((resolve, reject) => {
-			if (!msg && this.dynamicFieldTypes.includes(type))
+			if (!msg && Firestore.dynamicFieldTypes.includes(type) && (type === "msg" || /\[msg\./.test(value)))
 				return reject("Incoming message missing to evaluate the node/msg property");
 
 			return this.RED.util.evaluateNodeProperty(value, type, node, msg!, (error, result) => {
@@ -229,29 +258,15 @@ class Firestore<Node extends FirestoreNode, Config extends FirestoreConfig = Nod
 		if (msg?.constraints) return msg.constraints;
 
 		const constraints: Constraint = {};
+		const configConstraints = this.node.config.constraints;
 
-		for (const [key, value] of Object.entries(this.node.config.constraints) as Entry<
-			typeof this.node.config.constraints
-		>[]) {
+		for (const [key, value] of Object.entries(configConstraints) as Entry<typeof configConstraints>[]) {
 			switch (key) {
 				case "endAt":
 				case "endBefore":
 				case "startAfter":
 				case "startAt": {
-					const typesAllowed: Array<typeof value.valueType> = [
-						"bool",
-						"date",
-						"env",
-						"flow",
-						"global",
-						"json",
-						"jsonata",
-						"msg",
-						"null",
-						"num",
-						"str",
-					];
-					if (!typesAllowed.includes(value.valueType))
+					if (!Firestore.rangeFieldTypes.includes(value.valueType))
 						throw new Error(`Invalid type (${value.valueType}) for the ${key} field. Please reconfigure this node.`);
 
 					constraints[key] = await this.evaluateNodeProperty(value.value, value.valueType, this.node, msg);
@@ -260,8 +275,7 @@ class Firestore<Node extends FirestoreNode, Config extends FirestoreConfig = Nod
 				case "limitToFirst":
 				case "limitToLast":
 				case "offset": {
-					const typesAllowed: Array<typeof value.valueType> = ["flow", "global", "jsonata", "env", "msg", "num"];
-					if (!typesAllowed.includes(value.valueType))
+					if (!Firestore.limitFieldTypes.includes(value.valueType))
 						throw new Error(`Invalid type (${value.valueType}) for the ${key} field. Please reconfigure this node.`);
 
 					constraints[key] = await this.evaluateNodeProperty(value.value, value.valueType, this.node, msg);
@@ -271,16 +285,14 @@ class Firestore<Node extends FirestoreNode, Config extends FirestoreConfig = Nod
 					break;
 				}
 				case "orderBy": {
-					const typesAllowed = ["flow", "global", "jsonata", "env", "msg", "str"];
-					let valArray = value;
-
 					// Ensure it's an array - v < 0.0.2
+					let valArray = value;
 					if (!Array.isArray(value)) {
 						valArray = [value];
 					}
 
 					for (const [index, val] of valArray.entries()) {
-						if (!typesAllowed.includes(val.pathType))
+						if (!Firestore.orderFieldTypes.includes(val.pathType))
 							throw new Error(`Invalid type (${val.pathType}) for the ${key} field. Please reconfigure this node.`);
 
 						constraints[key] ||= [];
@@ -296,16 +308,7 @@ class Firestore<Node extends FirestoreNode, Config extends FirestoreConfig = Nod
 					break;
 				}
 				case "select": {
-					const typesAllowed: Array<typeof value.valueType> = [
-						"flow",
-						"global",
-						"jsonata",
-						"env",
-						"msg",
-						"str",
-						"json",
-					];
-					if (!typesAllowed.includes(value.valueType))
+					if (!Firestore.selectFieldTypes.includes(value.valueType))
 						throw new Error(`Invalid type (${value.valueType}) for the ${key} field. Please reconfigure this node.`);
 
 					constraints[key] = await this.evaluateNodeProperty(value.value, value.valueType, this.node, msg);
@@ -317,31 +320,16 @@ class Firestore<Node extends FirestoreNode, Config extends FirestoreConfig = Nod
 					break;
 				}
 				case "where": {
-					const valueTypesAllowed = [
-						"bool",
-						"date",
-						"env",
-						"flow",
-						"global",
-						"json",
-						"jsonata",
-						"msg",
-						"null",
-						"num",
-						"str",
-					];
-					const pathTypesAllowed = ["flow", "global", "jsonata", "env", "msg", "str"];
-					let valArray = value;
-
 					// Ensure it's an array - v < 0.0.2
+					let valArray = value;
 					if (!Array.isArray(value)) {
 						valArray = [value];
 					}
 
 					for (const [index, val] of valArray.entries()) {
-						if (!valueTypesAllowed.includes(val.valueType))
+						if (!Firestore.whereFieldTypes.includes(val.valueType))
 							throw new Error(`Invalid type (${val.valueType}) for the ${key} field. Please reconfigure this node.`);
-						if (!pathTypesAllowed.includes(val.pathType))
+						if (!Firestore.pathFieldTypes.includes(val.pathType))
 							throw new Error(`Invalid type (${val.pathType}) for the ${key} field. Please reconfigure this node.`);
 
 						constraints[key] ||= [];
@@ -453,6 +441,10 @@ class Firestore<Node extends FirestoreNode, Config extends FirestoreConfig = Nod
 			this.errorTimeoutID = setTimeout(() => this.setStatus(), time);
 		}
 
+		if (this.permissionDeniedStatus && status === "") {
+			status = "Permission Denied";
+		}
+
 		switch (status) {
 			case "Error":
 				this.node.status({ fill: "red", shape: "dot", text: status });
@@ -468,7 +460,7 @@ class Firestore<Node extends FirestoreNode, Config extends FirestoreConfig = Nod
 				this.node.status({ fill: "blue", shape: "dot", text: "Query Done!" });
 				break;
 			case "":
-				this.node.database?.setCurrentStatus(this.node.id);
+				this.node.database?.setCurrentStatus(this.node);
 				break;
 			default:
 				this.node.status({ fill: "red", shape: "dot", text: status });
