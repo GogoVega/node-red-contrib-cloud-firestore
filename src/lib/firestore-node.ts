@@ -126,12 +126,12 @@ class Firestore<Node extends FirestoreNode, Config extends FirestoreConfig = Nod
 	}
 
 	public attachStatusListener() {
-		this.node.database?.addStatusListener(this.node.id, this.serviceType);
+		this.node.database?.addStatusListener(this.node, this.serviceType);
 	}
 
 	public detachStatusListener(done: () => void) {
 		if (this.node.database) {
-			this.node.database.removeStatusListener(this.node.id, this.serviceType, done);
+			this.node.database.removeStatusListener(this.node, this.serviceType, done);
 		} else {
 			done();
 		}
@@ -460,7 +460,7 @@ class Firestore<Node extends FirestoreNode, Config extends FirestoreConfig = Nod
 				this.node.status({ fill: "blue", shape: "dot", text: "Query Done!" });
 				break;
 			case "":
-				this.node.database?.setCurrentStatus(this.node.id);
+				this.node.database?.setCurrentStatus(this.node);
 				break;
 			default:
 				this.node.status({ fill: "red", shape: "dot", text: status });
