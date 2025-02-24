@@ -441,6 +441,10 @@ class Firestore<Node extends FirestoreNode, Config extends FirestoreConfig = Nod
 			this.errorTimeoutID = setTimeout(() => this.setStatus(), time);
 		}
 
+		if (this.permissionDeniedStatus && status === "") {
+			status = "Permission Denied";
+		}
+
 		switch (status) {
 			case "Error":
 				this.node.status({ fill: "red", shape: "dot", text: status });
