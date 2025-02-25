@@ -60,12 +60,13 @@
       "d8baeef2707a77b5",
       "1b5c69ac26a6eed7",
       "c87c1434f562e22c",
-      "770a532dd82c2c5d"
+      "770a532dd82c2c5d",
+      "1addc1cfbb75e991"
     ],
     "x": 14,
     "y": 179,
     "w": 972,
-    "h": 542
+    "h": 582
   },
   {
     "id": "2c9b5f4cd21831cb",
@@ -85,7 +86,7 @@
       "fef3270b86843906"
     ],
     "x": 14,
-    "y": 759,
+    "y": 799,
     "w": 972,
     "h": 182
   },
@@ -106,7 +107,7 @@
       "5bae827171e8021e"
     ],
     "x": 14,
-    "y": 979,
+    "y": 1019,
     "w": 972,
     "h": 122
   },
@@ -129,7 +130,7 @@
       "2990484553b8b1e6"
     ],
     "x": 14,
-    "y": 1139,
+    "y": 1179,
     "w": 972,
     "h": 182
   },
@@ -168,6 +169,11 @@
     "props": [
       {
         "p": "payload"
+      },
+      {
+        "p": "user",
+        "v": "alanisawesome",
+        "vt": "str"
       }
     ],
     "repeat": "",
@@ -175,7 +181,7 @@
     "once": false,
     "onceDelay": 0.1,
     "topic": "",
-    "payload": "{\"alanisawesome\":{\"date_of_birth\":\"June 23, 1912\",\"full_name\":\"Alan Turing\",\"nickname\":\"Alan The Machine\"}}",
+    "payload": "{\"date_of_birth\":\"June 23, 1912\",\"full_name\":\"Alan Turing\",\"nickname\":\"Alan The Machine\"}",
     "payloadType": "json",
     "x": 120,
     "y": 260,
@@ -195,7 +201,7 @@
     "tosidebar": true,
     "console": false,
     "tostatus": false,
-    "complete": "payload.timestamp",
+    "complete": "payload",
     "targetType": "msg",
     "statusVal": "",
     "statusType": "auto",
@@ -212,6 +218,11 @@
     "props": [
       {
         "p": "payload"
+      },
+      {
+        "p": "user",
+        "v": "steveisapple",
+        "vt": "str"
       }
     ],
     "repeat": "",
@@ -219,7 +230,7 @@
     "once": false,
     "onceDelay": 0.1,
     "topic": "",
-    "payload": "{\"steveisapple\":{\"full_name\":\"Steve Jobs\",\"nickname\":\"Steve The King\",\"hobby\":\"Computer\"}}",
+    "payload": "{\"full_name\":\"Steve Jobs\",\"nickname\":\"Steve The King\",\"hobby\":\"Computer\"}",
     "payloadType": "json",
     "x": 120,
     "y": 320,
@@ -245,7 +256,7 @@
     "once": false,
     "onceDelay": 0.1,
     "topic": "",
-    "payload": "{\"alanisawesome\":{\"nickname\":\"Alan is Genius\"}}",
+    "payload": "{\"nickname\":\"Alan is Genius\"}",
     "payloadType": "json",
     "x": 160,
     "y": 440,
@@ -263,7 +274,9 @@
     "name": "Remove Steve",
     "props": [
       {
-        "p": "payload"
+        "p": "user",
+        "v": "steveisapple",
+        "vt": "str"
       }
     ],
     "repeat": "",
@@ -271,10 +284,8 @@
     "once": false,
     "onceDelay": 0.1,
     "topic": "",
-    "payload": "{\"steveisapple\":\"DELETE\"}",
-    "payloadType": "json",
     "x": 140,
-    "y": 560,
+    "y": 600,
     "wires": [
       [
         "d8baeef2707a77b5"
@@ -291,7 +302,7 @@
     "tosidebar": true,
     "console": false,
     "tostatus": false,
-    "complete": "payload.docs.users",
+    "complete": "payload.changes",
     "targetType": "msg",
     "statusVal": "",
     "statusType": "auto",
@@ -309,7 +320,7 @@
     "tosidebar": true,
     "console": false,
     "tostatus": false,
-    "complete": "payload.docs.users",
+    "complete": "payload.changes",
     "targetType": "msg",
     "statusVal": "",
     "statusType": "auto",
@@ -327,12 +338,12 @@
     "tosidebar": true,
     "console": false,
     "tostatus": false,
-    "complete": "payload.docs.users",
+    "complete": "payload.changes",
     "targetType": "msg",
     "statusVal": "",
     "statusType": "auto",
     "x": 880,
-    "y": 560,
+    "y": 600,
     "wires": []
   },
   {
@@ -349,7 +360,7 @@
     "statusVal": "",
     "statusType": "auto",
     "x": 880,
-    "y": 680,
+    "y": 720,
     "wires": []
   },
   {
@@ -358,14 +369,20 @@
     "z": "13c4e8e8f85d50b9",
     "g": "8f193a9c1fc939fb",
     "name": "Get All Users",
-    "props": [],
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
     "repeat": "",
     "crontab": "",
     "once": false,
     "onceDelay": 0.1,
     "topic": "",
+    "payload": "",
+    "payloadType": "str",
     "x": 130,
-    "y": 680,
+    "y": 720,
     "wires": [
       [
         "770a532dd82c2c5d"
@@ -382,12 +399,12 @@
     "tosidebar": true,
     "console": false,
     "tostatus": false,
-    "complete": "payload",
+    "complete": "payload.docs",
     "targetType": "msg",
     "statusVal": "",
     "statusType": "auto",
     "x": 460,
-    "y": 680,
+    "y": 720,
     "wires": []
   },
   {
@@ -428,10 +445,10 @@
     "type": "comment",
     "z": "13c4e8e8f85d50b9",
     "g": "8f193a9c1fc939fb",
-    "name": "Remove Steve from \"users\" - Use the \"DELETE\" keyword",
+    "name": "Remove Steve from \"users\"",
     "info": "",
-    "x": 270,
-    "y": 520,
+    "x": 180,
+    "y": 560,
     "wires": []
   },
   {
@@ -442,7 +459,7 @@
     "name": "Get All Users from \"users\"",
     "info": "",
     "x": 170,
-    "y": 640,
+    "y": 680,
     "wires": []
   },
   {
@@ -453,7 +470,7 @@
     "name": "Print All Users Changes",
     "info": "",
     "x": 680,
-    "y": 640,
+    "y": 680,
     "wires": []
   },
   {
@@ -475,7 +492,7 @@
     "payload": "{\"index\":1}",
     "payloadType": "json",
     "x": 130,
-    "y": 800,
+    "y": 840,
     "wires": [
       [
         "912544933b176de6"
@@ -501,7 +518,7 @@
     "payload": "{\"index\": \"INCREMENT 1\"}",
     "payloadType": "json",
     "x": 140,
-    "y": 860,
+    "y": 900,
     "wires": [
       [
         "912544933b176de6"
@@ -527,7 +544,7 @@
     "payload": "{\"index\": \"DECREMENT 1\"}",
     "payloadType": "json",
     "x": 140,
-    "y": 900,
+    "y": 940,
     "wires": [
       [
         "912544933b176de6"
@@ -544,12 +561,12 @@
     "tosidebar": true,
     "console": false,
     "tostatus": false,
-    "complete": "payload.index",
+    "complete": "payload",
     "targetType": "msg",
     "statusVal": "",
     "statusType": "auto",
     "x": 880,
-    "y": 800,
+    "y": 840,
     "wires": []
   },
   {
@@ -561,11 +578,11 @@
     "database": "e8796a1869e179bc",
     "collection": "demo",
     "collectionType": "str",
-    "document": "foo",
+    "document": "timestampOverwrited",
     "documentType": "str",
     "queryMethod": "set",
     "queryOptions": {
-      "merge": true
+      "merge": false
     },
     "x": 440,
     "y": 100,
@@ -583,7 +600,7 @@
     "collectionGroup": "",
     "collectionGroupType": "str",
     "constraints": {},
-    "document": "demo/foo",
+    "document": "demo/timestampOverwrited",
     "documentType": "str",
     "filter": "none",
     "inputs": 0,
@@ -603,13 +620,13 @@
     "g": "8f193a9c1fc939fb",
     "name": "Add User",
     "database": "e8796a1869e179bc",
-    "collection": "demo",
+    "collection": "users",
     "collectionType": "str",
-    "document": "users",
-    "documentType": "str",
+    "document": "user",
+    "documentType": "msg",
     "queryMethod": "set",
     "queryOptions": {
-      "merge": true
+      "merge": false
     },
     "x": 300,
     "y": 280,
@@ -622,7 +639,7 @@
     "g": "8f193a9c1fc939fb",
     "name": "User added",
     "database": "e8796a1869e179bc",
-    "collection": "demo",
+    "collection": "users",
     "collectionType": "str",
     "collectionGroup": "",
     "collectionGroupType": "str",
@@ -647,15 +664,15 @@
     "g": "8f193a9c1fc939fb",
     "name": "Update User Nickname",
     "database": "e8796a1869e179bc",
-    "collection": "demo",
+    "collection": "users",
     "collectionType": "str",
-    "document": "users",
+    "document": "alanisawesome",
     "documentType": "str",
     "queryMethod": "update",
     "queryOptions": {
-      "merge": false
+      "merge": true
     },
-    "x": 410,
+    "x": 430,
     "y": 440,
     "wires": []
   },
@@ -666,7 +683,7 @@
     "g": "8f193a9c1fc939fb",
     "name": "User Modified",
     "database": "e8796a1869e179bc",
-    "collection": "demo",
+    "collection": "users",
     "collectionType": "str",
     "collectionGroup": "",
     "collectionGroupType": "str",
@@ -691,16 +708,16 @@
     "g": "8f193a9c1fc939fb",
     "name": "Remove User",
     "database": "e8796a1869e179bc",
-    "collection": "demo",
+    "collection": "users",
     "collectionType": "str",
-    "document": "users",
-    "documentType": "str",
-    "queryMethod": "update",
+    "document": "user",
+    "documentType": "msg",
+    "queryMethod": "delete",
     "queryOptions": {
       "merge": false
     },
     "x": 340,
-    "y": 560,
+    "y": 600,
     "wires": []
   },
   {
@@ -710,7 +727,7 @@
     "g": "8f193a9c1fc939fb",
     "name": "User Removed",
     "database": "e8796a1869e179bc",
-    "collection": "demo",
+    "collection": "users",
     "collectionType": "str",
     "collectionGroup": "",
     "collectionGroupType": "str",
@@ -721,7 +738,7 @@
     "inputs": 0,
     "passThrough": false,
     "x": 660,
-    "y": 560,
+    "y": 600,
     "wires": [
       [
         "6a90881898ed3551"
@@ -735,18 +752,18 @@
     "g": "8f193a9c1fc939fb",
     "name": "All Users Changes",
     "database": "e8796a1869e179bc",
-    "collection": "demo",
+    "collection": "users",
     "collectionType": "str",
     "collectionGroup": "",
     "collectionGroupType": "str",
     "constraints": {},
-    "document": "users",
+    "document": "",
     "documentType": "str",
     "filter": "none",
     "inputs": 0,
     "passThrough": false,
     "x": 670,
-    "y": 680,
+    "y": 720,
     "wires": [
       [
         "ee3a2b0bc367a47e"
@@ -760,16 +777,16 @@
     "g": "2c9b5f4cd21831cb",
     "name": "",
     "database": "e8796a1869e179bc",
-    "collection": "demo",
+    "collection": "keywords",
     "collectionType": "str",
-    "document": "foo",
+    "document": "index",
     "documentType": "str",
     "queryMethod": "set",
     "queryOptions": {
-      "merge": true
+      "merge": false
     },
     "x": 350,
-    "y": 800,
+    "y": 840,
     "wires": []
   },
   {
@@ -779,18 +796,18 @@
     "g": "2c9b5f4cd21831cb",
     "name": "Index Changes",
     "database": "e8796a1869e179bc",
-    "collection": "demo",
+    "collection": "keywords",
     "collectionType": "str",
     "collectionGroup": "",
     "collectionGroupType": "str",
     "constraints": {},
-    "document": "foo",
+    "document": "index",
     "documentType": "str",
     "filter": "none",
     "inputs": 0,
     "passThrough": false,
     "x": 660,
-    "y": 800,
+    "y": 840,
     "wires": [
       [
         "e8373909bb49fb32"
@@ -804,16 +821,16 @@
     "g": "8f193a9c1fc939fb",
     "name": "Get Users",
     "database": "e8796a1869e179bc",
-    "collection": "demo",
+    "collection": "users",
     "collectionType": "str",
     "collectionGroup": "",
     "collectionGroupType": "str",
     "constraints": {},
-    "document": "users",
+    "document": "",
     "documentType": "str",
     "passThrough": false,
     "x": 300,
-    "y": 680,
+    "y": 720,
     "wires": [
       [
         "9acbf29beeba99c3"
@@ -839,7 +856,7 @@
     "payload": "{\"geo-point\":{\"GEO_POINT\":{\"latitude\":70,\"longitude\":25}}}",
     "payloadType": "json",
     "x": 130,
-    "y": 1020,
+    "y": 1060,
     "wires": [
       [
         "ca631f898f4bf2eb"
@@ -861,7 +878,7 @@
     "statusVal": "",
     "statusType": "auto",
     "x": 880,
-    "y": 1020,
+    "y": 1060,
     "wires": []
   },
   {
@@ -871,16 +888,16 @@
     "g": "6e01df90814d36ee",
     "name": "",
     "database": "e8796a1869e179bc",
-    "collection": "demo",
+    "collection": "keywords",
     "collectionType": "str",
-    "document": "foo",
+    "document": "some-place",
     "documentType": "str",
     "queryMethod": "set",
     "queryOptions": {
-      "merge": true
+      "merge": false
     },
     "x": 350,
-    "y": 1020,
+    "y": 1060,
     "wires": []
   },
   {
@@ -890,18 +907,18 @@
     "g": "6e01df90814d36ee",
     "name": "Index Changes",
     "database": "e8796a1869e179bc",
-    "collection": "demo",
+    "collection": "keywords",
     "collectionType": "str",
     "collectionGroup": "",
     "collectionGroupType": "str",
     "constraints": {},
-    "document": "foo",
+    "document": "some-place",
     "documentType": "str",
     "filter": "none",
     "inputs": 0,
     "passThrough": false,
     "x": 660,
-    "y": 1020,
+    "y": 1060,
     "wires": [
       [
         "f0cecb01bbbe7392"
@@ -916,7 +933,7 @@
     "name": "Read me for more info",
     "info": "To use a `Geo Point`, the `GEO_POINT` keyword must be used as follow:\n```js\n// This is the field value\nconst myGeoPoint = {\n    GEO_POINT: {\n        latitude: 10,\n        longitude: 20\n    }\n};\n\n// So the payload looks like:\nmsg.payload = {\n    \"my-geo-point-field-name\": myGeoPoint\n};\n```",
     "x": 140,
-    "y": 1060,
+    "y": 1100,
     "wires": []
   },
   {
@@ -938,7 +955,7 @@
     "payload": "{\"array\":[]}",
     "payloadType": "json",
     "x": 150,
-    "y": 1180,
+    "y": 1220,
     "wires": [
       [
         "b9fa6ff72afcabbc"
@@ -955,12 +972,12 @@
     "tosidebar": true,
     "console": false,
     "tostatus": false,
-    "complete": "payload.array",
+    "complete": "payload",
     "targetType": "msg",
     "statusVal": "",
     "statusType": "auto",
     "x": 880,
-    "y": 1180,
+    "y": 1220,
     "wires": []
   },
   {
@@ -970,16 +987,16 @@
     "g": "45c81e940e03c7ad",
     "name": "",
     "database": "e8796a1869e179bc",
-    "collection": "demo",
+    "collection": "keywords",
     "collectionType": "str",
     "document": "foo",
     "documentType": "str",
     "queryMethod": "set",
     "queryOptions": {
-      "merge": true
+      "merge": false
     },
     "x": 410,
-    "y": 1180,
+    "y": 1220,
     "wires": []
   },
   {
@@ -989,7 +1006,7 @@
     "g": "45c81e940e03c7ad",
     "name": "Index Changes",
     "database": "e8796a1869e179bc",
-    "collection": "demo",
+    "collection": "keywords",
     "collectionType": "str",
     "collectionGroup": "",
     "collectionGroupType": "str",
@@ -1000,7 +1017,7 @@
     "inputs": 0,
     "passThrough": false,
     "x": 660,
-    "y": 1180,
+    "y": 1220,
     "wires": [
       [
         "68a19221021b89e8"
@@ -1026,7 +1043,7 @@
     "payload": "{\"array\":{\"ARRAY_REMOVE\":\"bar\"}}",
     "payloadType": "json",
     "x": 170,
-    "y": 1280,
+    "y": 1320,
     "wires": [
       [
         "b9fa6ff72afcabbc"
@@ -1052,7 +1069,7 @@
     "payload": "{\"array\":{\"ARRAY_UNION\":\"bar\"}}",
     "payloadType": "json",
     "x": 160,
-    "y": 1240,
+    "y": 1280,
     "wires": [
       [
         "b9fa6ff72afcabbc"
@@ -1067,8 +1084,34 @@
     "name": "Read me for more info",
     "info": "To use a `Array Union` or `Array Remove`, keywords must be used as follow:\n```js\n// This is the field value\nconst myNewValueToPush = {\n    ARRAY_UNION: \"bar\"\n};\n\n// And to remove\nconst myValueToRemove = {\n    ARRAY_REMOVE: \"bar\"\n};\n\n// So the payload looks like:\nmsg.payload = {\n    \"my-array\": myNewValueToPush\n};\n```\n\n***NOTE***: Keywords cannot be used inside an array!!!",
     "x": 440,
-    "y": 1240,
+    "y": 1280,
     "wires": []
+  },
+  {
+    "id": "1addc1cfbb75e991",
+    "type": "inject",
+    "z": "13c4e8e8f85d50b9",
+    "g": "8f193a9c1fc939fb",
+    "name": "Remove Alan Nickname",
+    "props": [
+      {
+        "p": "payload"
+      }
+    ],
+    "repeat": "",
+    "crontab": "",
+    "once": false,
+    "onceDelay": 0.1,
+    "topic": "",
+    "payload": "{\"nickname\":\"DELETE\"}",
+    "payloadType": "json",
+    "x": 160,
+    "y": 480,
+    "wires": [
+      [
+        "108e033753b35f5a"
+      ]
+    ]
   },
   {
     "id": "e8796a1869e179bc",
