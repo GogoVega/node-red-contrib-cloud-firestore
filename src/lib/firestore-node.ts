@@ -175,6 +175,7 @@ class Firestore<Node extends FirestoreNode, Config extends FirestoreConfig = Nod
 	 * @returns The payload evaluated
 	 */
 	protected evaluatePayloadForFieldValue(payload: unknown): object {
+		if (typeof payload === "undefined") return {};
 		if (typeof payload !== "object" || !payload) throw new TypeError("msg.payload must be an object");
 
 		const fieldValue = new SpecialFieldValue(this.firestore!.client.admin!);
