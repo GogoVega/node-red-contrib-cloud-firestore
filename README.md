@@ -21,6 +21,8 @@
 </div>
 <br />
 
+![demo nodes](./assets/images/demo-flow.gif)
+
 > [!CAUTION]
 > **BREAKING CHANGES**: v0.1.0: the required version of Node.js is now >=18
 
@@ -41,7 +43,30 @@ There are 3 nodes included with this contrib:
 | Firestore&nbsp;GET | Fetches data from the specified path.<br />Query constraints can be used to sort and order your data. |
 | Firestore&nbsp;OUT | `SET`, `UPDATE` or `DELETE` data at the target Database.                                              |
 
-On the video above, we can see the "Query Constraint" feature, which is used to sort and order your data as required, and also shown is the "Drag and drop JSON file" feature, which automatically populates the fields with the content of the JSON file you provide.
+## Features
+
+<!-- - Autocomplete the `Path` field
+
+  ![demo autocomplete](./assets/images/autocomplete-feature.gif)
+-->
+
+- Editable List for Query Constraints
+
+  You can statically define your Query Constraints with an Editable List, which is used to sort and order your data as required.
+
+  ![demo query constraints](./assets/images/query-constraints-editablelist.gif)
+
+- Error message for incorrect input
+
+  The field provides feedback if the input is incorrect, specifying the reason for the error.
+
+  ![demo error message](./assets/images/input-error-message.gif)
+
+- Drag and drop JSON file
+
+  Automatically populates the fields with the content of the JSON file you provide.
+
+  ![demo JSON file](https://raw.githubusercontent.com/GogoVega/node-red-contrib-firebase-realtime-database/refs/heads/master/assets/images/drag-and-drop.gif)
 
 ## How to use?
 
@@ -89,7 +114,7 @@ If you have any other suggestions, please let me know [here](https://github.com/
 
 MIT License
 
-Copyright (c) 2023-2024 Gauthier Dandele
+Copyright (c) 2023-2025 Gauthier Dandele
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
