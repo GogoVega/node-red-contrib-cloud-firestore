@@ -168,6 +168,40 @@
 		return !RED.nodes.getType("firebase-config");
 	}
 
+	// TODO: see with the NR team a guideline (#4965)
+	// To avoid lots of tours randomly popping up in the editor
+	function initTourGuide() {
+		const tourName = "first-flow";
+		const packageName = "gogovega/node-red-contrib-cloud-firestore";
+		const settingName = `editor.tours.${packageName}.${tourName}`;
+
+		const tourGuide = function () {
+			// Skip if the tour has already been runned
+			if (RED.settings.get(settingName, false) === true) return;
+
+			// Skip if a tour is running - concurrent calls are not yet protected
+			const tourRunning = $(".red-ui-tourGuide-shade").length > 0;
+			if (tourRunning) {
+				// Listen to the event to run the tour once the current one has finished
+				$(".red-ui-tourGuide-shade").one("remove", () => setTimeout(tourGuide, 1000));
+			} else {
+				// TODO: At this stage, it's better to load the file from the repo
+				// to avoid publishing a new version for every change made to the tour.
+				const url = "https://cdn.jsdelivr.net/gh/GogoVega/node-red-contrib-cloud-firestore@master/resources/first-flow.js";
+				RED.tourGuide.run(url/*`/resources/@${packageName}/${tourName}.js`*/, function (error) {
+					if (error) {
+						console.error("Firebase tour: ", error);
+						RED.notify("Failed to load/run the Firestore tour", "error");
+					}
+
+					RED.settings.set(settingName, true);
+				});
+			}
+		};
+
+		tourGuide();
+	}
+
 	function init() {
 		try {
 			console.log("Firestore Check Worker Started");
@@ -188,6 +222,9 @@
 						// Ask the user to trigger the Update script
 						generateNotification("update");
 					}
+				} else {
+					// All ready => run the 'First flow' guide
+					initTourGuide();
 				}
 			});
 		} catch (error) {
