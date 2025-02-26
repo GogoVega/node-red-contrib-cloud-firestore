@@ -417,10 +417,6 @@ class Firestore<Node extends FirestoreNode, Config extends FirestoreConfig = Nod
 
 		if (!this.isFirestoreInNode(this.node)) this.setStatus("Query Done", 500);
 
-		if (snapshot && this instanceof FirestoreIn && "changes" in snapshot && this.filter !== "none") {
-			snapshot.changes = (snapshot as CollectionData).changes.filter((doc) => doc.type === this.filter);
-		}
-
 		const msg2Send: OutgoingMessage = {
 			...(msg || {}),
 			payload: snapshot,
@@ -526,8 +522,13 @@ export class FirestoreIn extends Firestore<FirestoreInNode> {
 		this.isDynamicConfig = this.node.config.inputs === 1;
 	}
 
-	public get filter(): Filter | undefined {
-		return this._filter;
+	// TODO: Magic filter
+	private applyFilter(snapshot: DataSnapshot): DataSnapshot {
+		if (snapshot && "changes" in snapshot && "size" in snapshot && this._filter !== "none") {
+			snapshot.changes = (snapshot as CollectionData).changes.filter((doc) => doc.type === this._filter);
+		}
+
+		return snapshot;
 	}
 
 	private getFilter(msg?: IncomingMessage): Filter {
@@ -586,7 +587,7 @@ export class FirestoreIn extends Firestore<FirestoreInNode> {
 				this.unsubscribe();
 				this.unsubscribeCallback = this.firestore?.subscribe(
 					config,
-					(snapshot) => this.sendMsg(snapshot),
+					(snapshot) => this.sendMsg(this.applyFilter(snapshot)),
 					(error) => this.onError(error)
 				);
 
