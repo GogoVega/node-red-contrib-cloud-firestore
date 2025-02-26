@@ -87,8 +87,8 @@ export default {
 				"fr": "Le noeud Firestore Out"
 			},
 			description: {
-				"en-US": "This node modifies the data at the specified path.",
-				"fr": "Ce noeud modifie les données du chemin spécifié."
+				"en-US": "This node modifies the data of the specified document.",
+				"fr": "Ce noeud modifie les données du document spécifié."
 			},
 			complete: function () {
 				// Clear the Firestore filter to returns to previous Palette state
