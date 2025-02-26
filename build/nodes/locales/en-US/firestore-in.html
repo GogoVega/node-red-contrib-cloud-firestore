@@ -29,6 +29,8 @@
 	<dl class="message-properties">
 		<dt class="optional">constraints<span class="property-type">object</span></dt>
 		<dd>an object containing the constraint(s) to apply to the query.</dd>
+		<dt class="optional">filter<span class="property-type">string</span></dt>
+		<dd>the filter to apply to the query.</dd>
 	</dl>
 	<h3>Outputs</h3>
 	<dl class="message-properties">
@@ -60,7 +62,13 @@
 	</p>
 	<p>
 		The <strong>Filter</strong> filters <code>payload.changes</code> to keep only the documents
-		whose change type matches the applied filter.
+		whose change type matches the applied filter. You can set it dynamically with <code>msg.filter</code>
+		and one of the following values: <code>added</code>, <code>modified</code>, <code>removed</code>
+		or <code>reset</code>.
+	</p>
+	<p>
+		For each valid message received, the subscription will be replaced by the new one.
+		You can also stop a subscription by using the <code>reset</code> value.
 	</p>
 	<ul>
 		<li><code>endAt</code><span class="property-type">various</span></li>

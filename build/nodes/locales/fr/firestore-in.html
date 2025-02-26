@@ -29,6 +29,8 @@
 	<dl class="message-properties">
 		<dt class="optional">constraints<span class="property-type">objet</span></dt>
 		<dd>un objet contenant la ou les contraintes à appliquer à la requête.</dd>
+		<dt class="optional">filter<span class="property-type">chaîne de caractères</span></dt>
+		<dd>le filtre à appliquer à la requête.</dd>
 	</dl>
 	<h3>Sorties</h3>
 	<dl class="message-properties">
@@ -53,7 +55,13 @@
 	</p>
 	<p>
 		Le <strong>Filtre</strong> filtre <code>payload.changes</code> afin de ne garder que les documents
-		dont le type de changement correspond au filtre appliqué.
+		dont le type de changement correspond au filtre appliqué. Vous pouvez le définir dynamiquement avec
+		<code>msg.filter</code> et une des valeurs suivantes : <code>added</code>, <code>modified</code>,
+		<code>removed</code> ou <code>reset</code>.
+	</p>
+	<p>
+		Pour chaque message valide reçu, la souscription sera remplacée par la nouvelle.
+ 		Vous pouvez également arrêter une souscription en utilisant la valeur <code>reset</code>.
 	</p>
 	<p>
 		Vous pouvez définir des contraintes pour la requête afin de trier et d'ordonner vos données. Vous pouvez définir une
