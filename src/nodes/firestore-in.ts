@@ -27,8 +27,7 @@ module.exports = function (RED: NodeAPI) {
 		firestore.attachStatusListener();
 		firestore.subscribe();
 
-		// TODO: Dynamic mode
-		//this.on("input", (msg, send, done) => firestore.subscribe(msg, send, done));
+		this.on("input", (msg, send, done) => firestore.subscribe(msg, send, done));
 
 		this.on("close", (done: () => void) => {
 			firestore.unsubscribe();

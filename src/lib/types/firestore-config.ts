@@ -94,6 +94,7 @@ interface Constraint {
 }
 
 export type DocumentChangeType = "added" | "removed" | "modified";
+export type Filter = DocumentChangeType | "msg" | "none";
 
 interface QueryOption {
 	merge: boolean;
@@ -120,7 +121,8 @@ export interface FirestoreInConfig extends NodeDef {
 	constraints: Constraint;
 	document: Document;
 	documentType: DocumentType;
-	filter: DocumentChangeType | "msg" | "none";
+	filter: Filter;
+	inputs: 0 | 1;
 	passThrough: boolean;
 }
 

@@ -29,6 +29,7 @@ import { ConfigNode, ServiceType } from "@gogovega/firebase-config-node/types";
 import { Entry, isFirebaseConfigNode } from "@gogovega/firebase-config-node/utils";
 import {
 	DocumentChangeType,
+	Filter,
 	FirestoreConfig,
 	FirestoreGetConfig,
 	FirestoreGetNode,
@@ -405,21 +406,6 @@ class Firestore<Node extends FirestoreNode, Config extends FirestoreConfig = Nod
 
 		if (!this.isFirestoreInNode(this.node)) this.setStatus("Query Done", 500);
 
-		if (
-			snapshot &&
-			"changes" in snapshot &&
-			this.isFirestoreInNode(this.node) &&
-			this.node.config.filter &&
-			this.node.config.filter !== "none"
-		) {
-			const filterAllowed: Array<DocumentChangeType> = ["added", "modified", "removed"];
-			const filter = this.node.config.filter === "msg" ? msg?.filter : this.node.config.filter;
-
-			if (filter && !filterAllowed.includes(filter)) throw new Error("Unknown filter (DocumentChangeType).");
-
-			snapshot.changes = (snapshot as CollectionData).changes.filter((doc) => doc.type === filter);
-		}
-
 		const msg2Send: OutgoingMessage = {
 			...(msg || {}),
 			payload: snapshot,
@@ -459,6 +445,13 @@ class Firestore<Node extends FirestoreNode, Config extends FirestoreConfig = Nod
 				break;
 			case "Query Done":
 				this.node.status({ fill: "blue", shape: "dot", text: "Query Done!" });
+				break;
+			case "Subscribed":
+			case "Unsubscribed":
+				this.node.status({ fill: "blue", shape: "dot", text: status });
+				break;
+			case "Waiting":
+				this.node.status({ fill: "blue", shape: "ring", text: "Waiting for Subscription..." });
 				break;
 			case "":
 				this.node.database?.setCurrentStatus(this.node);
@@ -501,6 +494,15 @@ export class FirestoreGet extends Firestore<FirestoreGetNode> {
 }
 
 export class FirestoreIn extends Firestore<FirestoreInNode> {
+	private static filterAllowed: Array<Filter> = ["added", "modified", "removed", "none"];
+
+	private _filter?: Filter;
+
+	/**
+	 * Whether the node should await a payload to subscribe to data.
+	 */
+	private isDynamicConfig: boolean = false;
+
 	/**
 	 * This property contains the **function to call** to unsubscribe the listener
 	 */
@@ -508,28 +510,86 @@ export class FirestoreIn extends Firestore<FirestoreInNode> {
 
 	constructor(node: FirestoreInNode, config: FirestoreInConfig, RED: NodeAPI) {
 		super(node, config, RED);
+
+		// No need to re-check all config - if the node has an input, the config is dynamic.
+		this.isDynamicConfig = this.node.config.inputs === 1;
 	}
 
-	//public subscribe(): void;
-	//public subscribe(msg: IncomingMessage, send: (msg: NodeMessage) => void, done: (error?: Error) => void): void;
-	public subscribe(): void {
+	// TODO: Magic filter
+	private applyFilter(snapshot: DataSnapshot): DataSnapshot {
+		if (snapshot && "changes" in snapshot && "size" in snapshot && this._filter !== "none") {
+			snapshot.changes = (snapshot as CollectionData).changes.filter((doc) => doc.type === this._filter);
+		}
+
+		return snapshot;
+	}
+
+	private getFilter(msg?: IncomingMessage): Filter {
+		const { filter } = this.node.config;
+
+		// Dynamic Filter ? Skip the static subscription
+		if (filter === "msg" && !msg) return filter;
+
+		const docChangeType = filter === "msg" ? (msg?.filter as DocumentChangeType | undefined) : filter;
+
+		if (typeof docChangeType !== "string" || !FirestoreIn.filterAllowed.includes(docChangeType))
+			throw new Error(`Unknown filter (DocumentChangeType): Received ${docChangeType}.`);
+
+		return docChangeType;
+	}
+
+	public subscribe(): void;
+	public subscribe(msg: IncomingMessage, send: (msg: NodeMessage) => void, done: (error?: Error) => void): void;
+	public subscribe(msg?: IncomingMessage, send?: (msg: NodeMessage) => void, done?: (error?: Error) => void): void {
 		(async () => {
 			try {
-				if (!this.firestore) return;
+				if (!this.firestore) {
+					if (done) done();
+					return;
+				}
 
-				const config = await this.getQueryConfig();
+				const msg2PassThrough = this.node.config.passThrough ? msg : undefined;
 
-				// TODO: Dynamic mode
+				// Unsubscribe and passthrough the msg
+				if (msg && msg.filter === "reset") {
+					this.unsubscribe();
+					this.setStatus("Unsubscribed");
+					if (send && msg2PassThrough) send(msg2PassThrough);
+					if (done) done();
+					return;
+				}
 
-				if (!(await this.node.database?.clientSignedIn())) return;
+				// Not work when starting the flow
+				// TODO: need LocalStatus to resolve it
+				this.setStatus("Waiting");
 
+				// Await the filter defined in the incoming message
+				this._filter = this.getFilter(msg);
+				if (this._filter === "msg" || (this.isDynamicConfig && !msg)) {
+					if (done) done();
+					return;
+				}
+
+				const config = await this.getQueryConfig(msg);
+
+				if (!(await this.node.database?.clientSignedIn())) {
+					if (done) done();
+					return;
+				}
+
+				this.unsubscribe();
 				this.unsubscribeCallback = this.firestore?.subscribe(
 					config,
-					(snapshot) => this.sendMsg(snapshot),
+					(snapshot) => this.sendMsg(this.applyFilter(snapshot)),
 					(error) => this.onError(error)
 				);
+
+				this.setStatus("Subscribed", 2000);
+
+				if (send && msg2PassThrough) send(msg2PassThrough);
+				if (done) done();
 			} catch (error) {
-				this.onError(error);
+				this.onError(error, done);
 			}
 		})();
 	}

@@ -26,6 +26,12 @@
 		const { generateToolTip, typedPathField, validators } = FirestoreUI;
 		const i18n = (key) => FirestoreUI._(key, "firestore-in");
 
+		const isDynamic = function (type = "str", value) {
+			return type === "msg" ? true : (type !== "str" && type !== "env")
+				? /\[msg/.test(value ?? "")
+				: false;
+		};
+
 		RED.nodes.registerType("firestore-in", {
 			align: "left",
 			category: "Firestore",
@@ -55,9 +61,9 @@
 				return this.name ? "node_label_italic" : "";
 			},
 			oneditprepare: function () {
-				const collectionField = typedPathField.create("collection").modeByDefault("static");
-				const collectionGroupField = typedPathField.create("collectionGroup").modeByDefault("static").allowSlash(false);
-				const documentField = typedPathField.create("document").modeByDefault("static");
+				const collectionField = typedPathField.create("collection");
+				const collectionGroupField = typedPathField.create("collectionGroup").allowSlash(false);
+				const documentField = typedPathField.create("document");
 
 				collectionField.build();
 				collectionGroupField.build();
@@ -136,7 +142,19 @@
 					collectionGroupType.val("str");
 				}
 
-				const inputs = refType === "none" ? 1 : 0;
+				const filterDynamic = $("#node-input-filter").val() === "msg";
+				const pathDynamic = [collection, collectionGroup, document].some((field) =>
+					isDynamic(field.typedInput("type"), field.typedInput("value")));
+				const constraintDynamic = Object.values(this.constraints).some((values) => {
+					if (!Array.isArray(values)) values = [values];
+					return values.some((constraint) => {
+						if (Object.keys(constraint).length > 3) {
+							if (isDynamic(constraint.valueType, constraint.value)) return true;
+						}
+						return isDynamic(constraint.pathType ?? constraint.valueType, constraint.path ?? constraint.value);
+					});
+				});
+				const inputs = (filterDynamic || pathDynamic || constraintDynamic) ? 1 : 0;
 				$("#node-input-inputs").val(inputs);
 			},
 			oneditresize: (size) => editableConstraintsList.reSize(size),
@@ -159,7 +177,7 @@
 		<input type="hidden" id="node-input-inputs" />
 		<label for="node-input-referenceType"><i class="fa fa-bars"></i> <span data-i18n="firestore-in.label.referenceType"></span></label>
 		<select id="node-input-referenceType" style="width:70%;">
-			<option value="none" data-i18n="firestore-in.reference.none" disabled></option>
+			<option value="none" data-i18n="firestore-in.reference.none"></option>
 			<option value="collection" data-i18n="firestore-in.reference.collection"></option>
 			<option value="collectionGroup" data-i18n="firestore-in.reference.collectionGroup"></option>
 			<option value="document" data-i18n="firestore-in.reference.document"></option>
@@ -197,7 +215,7 @@
 	<div class="form-row form-row-ref form-row-collection form-row-collectionGroup">
 		<label for="node-input-filter"><i class="fa fa-sign-out"></i> <span data-i18n="firestore-in.label.filter"></span></label>
 		<select id="node-input-filter" style="width:70%;">
-			<option value="msg" data-i18n="firestore-in.filter.msg" disabled></option>
+			<option value="msg" data-i18n="firestore-in.filter.msg"></option>
 			<option value="none" data-i18n="firestore-in.filter.none"></option>
 			<option value="added" data-i18n="firestore-in.filter.added"></option>
 			<option value="modified" data-i18n="firestore-in.filter.modified"></option>
