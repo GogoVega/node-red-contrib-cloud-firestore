@@ -188,7 +188,7 @@
 				// TODO: At this stage, it's better to load the file from the repo
 				// to avoid publishing a new version for every change made to the tour.
 				const url = "https://cdn.jsdelivr.net/gh/GogoVega/node-red-contrib-cloud-firestore@master/resources/first-flow.js";
-				RED.tourGuide.run(`/resources/@${packageName}/${tourName}.js`, function (error) {
+				RED.tourGuide.run(url/*`/resources/@${packageName}/${tourName}.js`*/, function (error) {
 					if (error) {
 						console.error("Firebase tour: ", error);
 						RED.notify("Failed to load/run the Firestore tour", "error");
