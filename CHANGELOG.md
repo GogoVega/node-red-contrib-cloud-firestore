@@ -1,5 +1,31 @@
 # Change log
 
+## 0.1.2
+
+### Changes
+
+- Update the `demo-flow` in a more Firestore way
+- Ignore `evaluatePayloadForFieldValue` if payload is undefined (#12)
+- Update Firestore GET node for `payload.changes` deprecation
+- Bump `@gogovega/firebase-config-node` from 0.2.1 to 0.2.3
+  - Using RTDB status must validate database URL
+
+### Enhances
+
+- Allow Firestore IN to be dynamic (#11)
+- Introduce the `First Flow` tour guide (#13)
+
+### Fixes
+
+- `FirestoreUI.validators.path` error messages (#10)
+
+### Improves
+
+- Some Improvements (#9)
+  - Ensure to persist the `Permission Denied` status
+  - Update the `Confirm Update` message
+  - Replace nodeId by node instance for `statusListener`
+
 ## 0.1.1
 
 ### Changes
