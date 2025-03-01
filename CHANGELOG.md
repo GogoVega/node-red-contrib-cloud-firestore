@@ -1,5 +1,21 @@
 # Change log
 
+## 0.1.3
+
+### Changes
+
+- Bump `@gogovega/firebase-config-node` from 0.2.3 to 0.2.4
+  - Fix `got` dependency missing - replaced by `axios` ([#22](https://github.com/GogoVega/Firebase-Config-Node/pull/22))
+  - Support for `addDoc` to create a doc with auto-generated id ([#23](https://github.com/GogoVega/Firebase-Config-Node/pull/23))
+
+### Enhances
+
+- Support for addDoc to create a doc with auto-generated ID (#15)
+
+### Fixes
+
+- Add missing validation error messages
+
 ## 0.1.2
 
 ### Changes
