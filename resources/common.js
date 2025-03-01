@@ -98,12 +98,18 @@ var FirestoreUI = FirestoreUI || (function () {
 
 					let allowBlank = false, allowSlash = true;
 					if (refSelect.length) {
+						// Validation by the edit box
 						const referenceType = refSelect.val();
 						allowBlank = referenceType !== fieldName;
 						allowSlash = fieldName !== "collectionGroup";
 					} else if (this.type === "firestore-out") {
-						allowBlank = fieldName === "collection";
+						if (fieldName === "collection") {
+							allowBlank = true;
+						} else if (($("#node-input-queryMethod").val() ?? this.queryMethod) === "set") {
+							allowBlank = true;
+						}
 					} else {
+						// Validation by the node
 						if ((this.document || this.collection) && this.collectionGroup) {
 							allowBlank = true;
 							allowSlash = fieldName !== "collectionGroup";

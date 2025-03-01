@@ -37,7 +37,7 @@
 				collectionType: { value: "str", label: i18n("label.collection"), validate: validators.pathType() },
 				document: { value: "", label: i18n("label.document"), validate: validators.typedInput("documentType") },
 				documentType: { value: "str", label: i18n("label.document"), validate: validators.pathType() },
-				queryMethod: { value: "", label: i18n("label.queryMethod"), validate: validators.queryMethod() },
+				queryMethod: { value: "set", label: i18n("label.queryMethod"), validate: validators.queryMethod() },
 				queryOptions: { value: { merge: false } },
 			},
 			inputs: 1,
@@ -56,6 +56,10 @@
 				documentField.build();
 
 				$("#node-input-merge").prop("checked", this.queryOptions?.merge || false);
+
+				// Allow empty document path for the set method
+				const queryMethod = $("#node-input-queryMethod");
+				queryMethod.on("change", () => documentField.dynamicallyAllowBlank(queryMethod.val() === "set"));
 			},
 			oneditsave: function () {
 				const merge = $("#node-input-merge").prop("checked");
