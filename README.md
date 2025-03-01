@@ -110,6 +110,12 @@ Read more about the different ways to authenticate [here](https://github.com/Gog
 
 If you have any other suggestions, please let me know [here](https://github.com/GogoVega/node-red-contrib-cloud-firestore/discussions/new?category=ideas).
 
+## Telemetry Usage
+
+This project collects anonymous telemetry data to improve the user experience of the `First Flow` tour guide.
+The data collected only contains the progress of the tour. No personal information or credential is collected.
+This data will be used to improve the tour and potentially create other interactive tutorials if there is interest.
+
 ## License
 
 MIT License
