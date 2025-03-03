@@ -35,8 +35,10 @@ export default {
 				"fr": "Ce didacticiel vous guidera dans la création de votre premier flux Firestore."
 			},
 			prepare: function () {
-				const that = this;
+				// Ensure all trays are closed
+				RED.tray.close();
 
+				const that = this;
 				let isNewUser = true;
 				RED.nodes.eachConfig((c) => {
 					if (c.type === "firebase-config") {
@@ -61,8 +63,8 @@ export default {
 							fields: [
 								{ name: "Node-RED version", value: RED.settings.version },
 								{ name: "Nouvel utilisateur", value: isNewUser ? "Oui" : "Non" },
-								{ name: "Étapes complétées", value: `${that.index}/${that.count}`, inline: true },
-								{ name: "Temps mis", value: `${(Date.now() - that.startTime)/1000}s`, inline: true },
+								{ name: "Étapes terminées", value: `${that.index}/${that.count}`, inline: true },
+								{ name: "Temps mis", value: `\`${(Date.now() - that.startTime)/1000}\`s`, inline: true },
 								{ name: "Détail des étapes", value: `\`\`\`json\n${JSON.stringify({...that.telemetry}, null, 2)}\n\`\`\`` },
 							],
 							footer: {
@@ -74,6 +76,10 @@ export default {
 							color: color
 						}]
 					};
+
+					if (that.feedback) {
+						payload.embeds[0].fields.splice(4, 0, { name: "Feedback", value: `\`\`\`txt\n${that.feedback}\n\`\`\`` });
+					}
 
 					const send = function () {
 						$.ajax({
@@ -306,13 +312,16 @@ export default {
 			description: {
 				"en-US": `
 					<p>This flow will introduce you to the basic usage of nodes. Enjoy exploring!</p>
-					<p>I hope this tutorial helped you... feel free to send me your <a href="https://github.com/GogoVega/node-red-contrib-cloud-firestore/discussions/new?category=ideas">comments <i class="fa fa-external-link-square"></i></a> to improve it 🙂</p>`,
+					<p>I hope this tutorial helped you... feel free to send me your comments on <a href="https://github.com/GogoVega/node-red-contrib-cloud-firestore/discussions/new?category=ideas" title="open GitHub">GitHub <i class="fa fa-external-link-square"></i></a> to improve it 🙂</p>
+					<textarea id="tour-input-submit-feedback" placeholder="Or send me your comments anonymously by writing them here..." style="width: 100%;" maxlength="1000"></textarea>`,
 				"fr": `
 					<p>Ce flux d'exemples vous fera découvrir l'utilisation basique des noeuds. Bonne découverte!</p>
-					<p>J'espère que ce didacticiel vous a aidé... n'hésitez pas à me transmettre vos <a href="https://github.com/GogoVega/node-red-contrib-cloud-firestore/discussions/new?category=ideas">remarques <i class="fa fa-external-link-square"></i></a> pour l'enrichir 🙂</p>`
+					<p>J'espère que ce didacticiel vous a aidé... n'hésitez pas à me transmettre vos remarques sur <a href="https://github.com/GogoVega/node-red-contrib-cloud-firestore/discussions/new?category=ideas" title="ouvrir GitHub">GitHub <i class="fa fa-external-link-square"></i></a> pour l'enrichir 🙂</p>
+					<textarea id="tour-input-submit-feedback" placeholder="Ou transmettez-moi vos remarques de manière anonyme en les écrivant ici..." style="width: 100%; " maxlength="1000"></textarea>`
 			},
 			width: 400,
 			complete: function () {
+				this.feedback = $("#tour-input-submit-feedback").val();
 				this.saveStep();
 			}
 		}
