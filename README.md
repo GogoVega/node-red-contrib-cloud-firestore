@@ -116,6 +116,12 @@ This project collects anonymous telemetry data to improve the user experience of
 The data collected only contains the progress of the tour. No personal information or credential is collected.
 This data will be used to improve the tour and potentially create other interactive tutorials if there is interest.
 
+To disable the telemetry, enter the following line into your browser console before closing the tour:
+
+```js
+FirestoreUI.telemetry = false
+```
+
 ## License
 
 MIT License

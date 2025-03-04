@@ -21,7 +21,7 @@
  * to help users create their first Firestore flow in Node-RED. Each step includes
  * a title, description, and actions to be performed.
  */
-export default {
+const tour = {
 	steps: [
 		{	// TODO: go through a class for icon
 			titleIcon: 'firebase"><img src="/icons/@gogovega/node-red-contrib-cloud-firestore/firebase.svg',
@@ -39,71 +39,14 @@ export default {
 				RED.tray.close();
 
 				const that = this;
-				let isNewUser = true;
-				RED.nodes.eachConfig((c) => {
-					if (c.type === "firebase-config") {
-						isNewUser = false;
-						return false;
-					}
+				const url = "https://cdn.jsdelivr.net/gh/GogoVega/node-red-contrib-cloud-firestore@master/assets/tours/telemetry.js";
+				import(url).then(function (telemetry) {
+					telemetry.prepareTelemetry(tour);
+					// Send telemetry when the tour has finished
+					$(".red-ui-tourGuide-shade").one("remove", function () {
+						telemetry.sendTelemetry(that);
+					});
 				});
-
-				this.startTime = Date.now();
-				this.telemetry = {};
-				this.saveStep = () => {
-					this.telemetry[this.index] = Date.now();
-				};
-
-				// Send telemetry when the tour has finished
-				const url = "webhooks/1345451455666192474/vIzTRG50WigquZVgySe7pT89Yb5Br8GV_9EkZqvZkmtONijJWP74syaMDZYZ60U8L2TZ";
-				$(".red-ui-tourGuide-shade").one("remove", function () {
-					that.index++;
-					const color = that.index === 1 ? 16753920 : that.index === that.count ? 32768 : 255;
-					const payload = {
-						embeds:[{
-							fields: [
-								{ name: "Node-RED version", value: RED.settings.version },
-								{ name: "Nouvel utilisateur", value: isNewUser ? "Oui" : "Non" },
-								{ name: "Étapes terminées", value: `${that.index}/${that.count}`, inline: true },
-								{ name: "Temps mis", value: `\`${(Date.now() - that.startTime)/1000}\`s`, inline: true },
-								{ name: "Détail des étapes", value: `\`\`\`json\n${JSON.stringify({...that.telemetry}, null, 2)}\n\`\`\`` },
-							],
-							footer: {
-								// Pseudo UUID
-								text: RED.nodes.getWorkspaceOrder()[0] || "Unknown",
-							},
-							title: "Firestore - First Flow tour",
-							timestamp: new Date(),
-							color: color
-						}]
-					};
-
-					if (that.feedback) {
-						payload.embeds[0].fields.splice(4, 0, { name: "Feedback", value: `\`\`\`txt\n${that.feedback}\n\`\`\`` });
-					}
-
-					const send = function () {
-						$.ajax({
-							method: "POST",
-							url: "https://discord.com/api/" + url,
-							data: JSON.stringify(payload),
-							dataType: "json",
-							headers: {
-								"Content-Type": "application/json"
-							},
-							success: (_data, _textStatus, jqXHR) => {
-								if (jqXHR.status === 429 && jqXHR.responseJSON) {
-									const waitUntil = jqXHR.responseJSON["retry_after"];
-									setTimeout(send, waitUntil);
-								}
-							},
-						});
-					};
-
-					send();
-				});
-			},
-			complete: function () {
-				this.saveStep();
 			}
 		},
 		{
@@ -124,9 +67,6 @@ export default {
 					$("#red-ui-palette-header-Firestore").closest(".red-ui-palette-category").show();
 					done();
 				}, 200);
-			},
-			complete: function () {
-				this.saveStep();
 			}
 		},
 		{
@@ -139,9 +79,6 @@ export default {
 			description: {
 				"en-US": "This node subscribes to data at the specified path and sends a payload for each change.",
 				"fr": "Ce noeud s'abonne aux données du chemin spécifié et envoie une charge utile pour chaque changement."
-			},
-			complete: function () {
-				this.saveStep();
 			}
 		},
 		{
@@ -154,9 +91,6 @@ export default {
 			description: {
 				"en-US": "This node reads the data from the specified path and sends a payload.",
 				"fr": "Ce noeud lit les données du chemin spécifié et envoie une charge utile."
-			},
-			complete: function () {
-				this.saveStep();
 			}
 		},
 		{
@@ -174,7 +108,6 @@ export default {
 				// Clear the Firestore filter to returns to previous Palette state
 				$("#red-ui-palette-search input").searchBox("value", "pending");
 				$("#red-ui-palette-search input").searchBox("value", this.paletteFilter || "");
-				this.saveStep();
 			}
 		},
 		{
@@ -197,9 +130,6 @@ export default {
 			prepare: function (done) {
 				RED.actions.invoke("core:show-import-dialog");
 				setTimeout(done, 200);
-			},
-			complete: function () {
-				this.saveStep();
 			}
 		},
 		{
@@ -223,9 +153,6 @@ export default {
 					})
 					.trigger("click");
 				setTimeout(done, 200);
-			},
-			complete: function () {
-				this.saveStep();
 			}
 		},
 		{
@@ -248,9 +175,6 @@ export default {
 				// Highlight the config node
 				RED.sidebar.config.show("e8796a1869e179bc");
 				setTimeout(done, 300);
-			},
-			complete: function () {
-				this.saveStep();
 			}
 		},
 		{
@@ -280,9 +204,6 @@ export default {
 					RED.sidebar.help.show("firebase-config");
 					done();
 				}, 500);
-			},
-			complete: function () {
-				this.saveStep();
 			}
 		},
 		{
@@ -299,9 +220,6 @@ export default {
 				RED.workspaces.show("13c4e8e8f85d50b9");
 				RED.sidebar.show("debug");
 				setTimeout(done, 300);
-			},
-			complete: function () {
-				this.saveStep();
 			}
 		},
 		{
@@ -322,8 +240,9 @@ export default {
 			width: 400,
 			complete: function () {
 				this.feedback = $("#tour-input-submit-feedback").val();
-				this.saveStep();
 			}
 		}
 	],
-}
+};
+
+export default tour;
