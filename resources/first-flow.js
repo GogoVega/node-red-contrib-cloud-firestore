@@ -39,7 +39,7 @@ const tour = {
 				RED.tray.close();
 
 				const that = this;
-				const url = "https://cdn.jsdelivr.net/gh/GogoVega/node-red-contrib-cloud-firestore@master/assets/tours/telemetry.js";
+				const url = "https://gogovega.github.io/firebase-tours/firestore/telemetry.js";
 				import(url).then(function (telemetry) {
 					telemetry.prepareTelemetry(tour);
 					// Send telemetry when the tour has finished
