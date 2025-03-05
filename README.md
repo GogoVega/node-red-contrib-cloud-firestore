@@ -79,7 +79,7 @@ Find this package `@gogovega/node-red-contrib-cloud-firestore` and click install
 
 ```bash
 cd ~/.node-red
-npm install @gogovega/node-red-contrib-cloud-firestore --omit=dev
+npm install @gogovega/node-red-contrib-cloud-firestore@latest --omit=dev
 ```
 
 Remember to restart Node RED after using either method.
@@ -114,13 +114,7 @@ If you have any other suggestions, please let me know [here](https://github.com/
 
 This project collects anonymous telemetry data to improve the user experience of the `First Flow` tour guide.
 The data collected only contains the progress of the tour. No personal information or credential is collected.
-This data will be used to improve the tour and potentially create other interactive tutorials if there is interest.
-
-To disable the telemetry, enter the following line into your browser console before closing the tour:
-
-```js
-FirestoreUI.telemetry = false
-```
+This data will be used to improve the tour and potentially create other interactive tutorials if there is interest. Read more [here](./assets/tours/README.md).
 
 ## License
 
