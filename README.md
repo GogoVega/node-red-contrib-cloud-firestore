@@ -114,7 +114,7 @@ If you have any other suggestions, please let me know [here](https://github.com/
 
 This project collects anonymous telemetry data to improve the user experience of the `First Flow` tour guide.
 The data collected only contains the progress of the tour. No personal information or credential is collected.
-This data will be used to improve the tour and potentially create other interactive tutorials if there is interest. Read more [here](./assets/tours/README.md).
+This data will be used to improve the tour and potentially create other interactive tutorials if there is interest. Read more [here](https://github.com/GogoVega/node-red-contrib-cloud-firestore/wiki/tours).
 
 ## License
 
