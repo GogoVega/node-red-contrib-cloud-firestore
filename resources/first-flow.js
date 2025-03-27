@@ -40,13 +40,16 @@ const tour = {
 
 				const that = this;
 				const url = "https://gogovega.github.io/firebase-tours/firestore/telemetry.js";
-				import(url).then(function (telemetry) {
-					telemetry.prepareTelemetry(tour);
-					// Send telemetry when the tour has finished
-					$(".red-ui-tourGuide-shade").one("remove", function () {
-						telemetry.sendTelemetry(that);
+				// TODO: Remove me
+				if (!FirestoreUI._telemetrySupported) {
+					import(url).then(function (telemetry) {
+						telemetry.prepareTelemetry(tour);
+						// Send telemetry when the tour has finished
+						$(".red-ui-tourGuide-shade").one("remove", function () {
+							telemetry.sendTelemetry(that);
+						});
 					});
-				});
+				}
 			}
 		},
 		{
