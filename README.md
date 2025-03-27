@@ -23,9 +23,6 @@
 
 ![demo nodes](./assets/images/demo-flow.gif)
 
-> [!CAUTION]
-> **BREAKING CHANGES**: v0.1.0: the required version of Node.js is now >=18
-
 ## What is it?
 
 This package is used to communicate with Google Cloud Firestore.

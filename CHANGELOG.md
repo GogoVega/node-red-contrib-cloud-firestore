@@ -1,5 +1,16 @@
 # Change log
 
+## 0.1.4
+
+### Changes
+
+- Bump `@gogovega/firebase-config-node` from 0.2.4 to 0.2.5
+  - Bump dependencies to latest
+
+### Fixes
+
+- Fix and improve the `tourGuide` runner (#17)
+
 ## 0.1.3
 
 ### Changes
