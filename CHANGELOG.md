@@ -1,5 +1,13 @@
 # Change log
 
+## 0.1.5
+
+### Changes
+
+- Bump `@gogovega/firebase-config-node` from 0.2.5 to 0.2.6
+  - Bump dependencies to latest ([#26](https://github.com/GogoVega/Firebase-Config-Node/pull/26))
+- Update the dependency versioning (#20)
+
 ## 0.1.4
 
 ### Changes
