@@ -1121,7 +1121,7 @@
     "claims": {},
     "createUser": false,
     "status": {
-      "firestore": true,
+      "firestore": false,
       "storage": false
     },
     "useClaims": false
