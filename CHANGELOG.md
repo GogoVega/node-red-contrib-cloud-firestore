@@ -11,6 +11,10 @@
 - Bump `@gogovega/firebase-config-node` from 0.2.6 to 0.3.0 (#22)
   - Bump dependencies to latest ([#33](https://github.com/GogoVega/Firebase-Config-Node/pull/33))
 
+### Fixes
+
+- Fix and update `demo-flow` example (#24)
+
 ## 0.1.5
 
 ### Changes
