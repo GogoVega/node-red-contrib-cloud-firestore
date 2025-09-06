@@ -781,7 +781,7 @@
     "collectionType": "str",
     "document": "index",
     "documentType": "str",
-    "queryMethod": "set",
+    "queryMethod": "update",
     "queryOptions": {
       "merge": false
     },
@@ -1055,7 +1055,7 @@
     "type": "inject",
     "z": "13c4e8e8f85d50b9",
     "g": "45c81e940e03c7ad",
-    "name": "Push the String \"bar\"",
+    "name": "Add the String \"bar\"",
     "props": [
       {
         "p": "payload"
@@ -1068,7 +1068,7 @@
     "topic": "",
     "payload": "{\"array\":{\"ARRAY_UNION\":\"bar\"}}",
     "payloadType": "json",
-    "x": 160,
+    "x": 150,
     "y": 1280,
     "wires": [
       [
@@ -1121,9 +1121,18 @@
     "claims": {},
     "createUser": false,
     "status": {
-      "firestore": false,
+      "firestore": true,
       "storage": false
     },
     "useClaims": false
+  },
+  {
+    "id": "c9fbf2f260dea295",
+    "type": "global-config",
+    "env": [],
+    "modules": {
+      "@gogovega/node-red-contrib-cloud-firestore": "0.2.0",
+      "@gogovega/firebase-config-node": "0.3.0"
+    }
   }
 ]
