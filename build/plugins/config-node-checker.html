@@ -201,7 +201,7 @@
 							if (result.loadable) {
 								// Ask the user to restart NR
 								generateNotification("restart");
-							} else if (!result.loadable && result.updateScriptCalled) {
+							} else if (result.updateScriptCalled) {
 								// The user has triggered the Update script but not restarted NR
 								generateNotification("restart-update");
 							} else {

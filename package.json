@@ -39,7 +39,7 @@
       "firestore-get": "build/nodes/firestore-get.js"
     },
     "plugins": {
-      "config-node-checker": "build/plugins/config-node-checker.js"
+      "firestore-config-node-checker": "build/plugins/config-node-checker.js"
     },
     "version": ">=3"
   },
