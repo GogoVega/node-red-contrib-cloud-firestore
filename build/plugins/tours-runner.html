@@ -25,7 +25,7 @@
 			const packageName = "gogovega/node-red-contrib-cloud-firestore";
 			const settingName = `editor.tours.${packageName}.${tourName}`;
 
-			// Skip if the tour has already been runned
+			// Skip if the tour has already been run
 			if (RED.settings.get(settingName, false) === true) return;
 
 			// TODO: At this stage, it's better to load the file from the repo
@@ -35,7 +35,7 @@
 
 			let telemetry;
 			const tourGuide = function (tour) {
-				// Skip if the tour has already been runned
+				// Skip if the tour has already been run
 				if (RED.settings.get(settingName, false) === true) return;
 
 				// Skip if a tour is running - concurrent calls are not yet protected
@@ -79,7 +79,7 @@
 		const plugin = {
 			type: "firebase-tours-runner",
 			name: "Firestore Tours Runner",
-			description: "Checks if the Firebase config node satisfies the constraints of Firestore nodes",
+			description: "Runs Firestore tours to guide users through features and workflows",
 			onadd: function () {
 				console.log("[firestore:plugin]: Firestore Tours Runner started");
 
