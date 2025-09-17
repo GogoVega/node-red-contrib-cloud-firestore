@@ -19,7 +19,7 @@
 const { join } = require("node:path");
 const { existsSync, readFileSync, writeFileSync } = require("node:fs");
 
-const filePath = "src/lib/utils.ts";
+const filePath = "src/plugins/config-node-checker.ts";
 
 const versionRegex = /requiredVersion = \[([0-9], [0-9]+, [0-9]+)\]/;
 

@@ -17,27 +17,8 @@
 import { NodeAPI } from "node-red";
 import { FirestoreOut } from "../lib/firestore-node";
 import { FirestoreOutConfig, FirestoreOutNode } from "../lib/types";
-import { configNodeStatusHandler, updateDependenciesHandler } from "../lib/endpoints";
 
 module.exports = function (RED: NodeAPI) {
-	// ----- ENDPOINTS FOR ALL FIRESTORE NODES ----- //
-
-	// Check if the Config Node version satisfies the require one
-	RED.httpAdmin.get(
-		"/firebase/firestore/config-node/status",
-		RED.auth.needsPermission("firestore-out.write"),
-		configNodeStatusHandler
-	);
-
-	// Run the Update Script
-	RED.httpAdmin.post(
-		"/firebase/firestore/config-node/scripts",
-		RED.auth.needsPermission("firestore-out.write"),
-		(req, resp) => updateDependenciesHandler(RED, req, resp)
-	);
-
-	// TODO: Autocomplete endpoint
-
 	function FirestoreOutNode(this: FirestoreOutNode, config: FirestoreOutConfig) {
 		RED.nodes.createNode(this, config);
 

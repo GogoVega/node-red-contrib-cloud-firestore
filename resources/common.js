@@ -261,9 +261,6 @@ var FirestoreUI = FirestoreUI || (function () {
 		return RED._(`@gogovega/node-red-contrib-cloud-firestore/${dict}:${group || dict}.${key}`, tplStrs);
 	}
 
-	// Check the Firebase Config Node
-	$.getScript("resources/@gogovega/node-red-contrib-cloud-firestore/config-node.js");
-
 	return {
 		_: i18nFullOptions,
 		generateToolTip: generateToolTip,
