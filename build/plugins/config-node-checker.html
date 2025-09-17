@@ -220,7 +220,11 @@
 								generateNotification("update");
 							} else {
 								// All ready => run the 'First flow' guide
-								// TODO
+								const plugin = RED.plugins.getPlugin("firestore-tours-runner");
+								
+								if (plugin && typeof plugin.runner === "function") {
+									plugin.runner();
+								}
 							}
 						}
 					});
