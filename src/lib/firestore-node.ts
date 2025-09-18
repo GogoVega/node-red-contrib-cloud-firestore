@@ -81,6 +81,11 @@ export class Firestore<Node extends FirestoreNode, Config extends FirestoreConfi
 		"num",
 		"str",
 	];
+
+	/**
+	 * This property is used to indicate whether the config node version meets the version required by this palette.
+	 * If this is not the case, the nodes in this palette will not be active.
+	 */
 	public static configNodeSatisfiesVersion = false;
 
 	/**

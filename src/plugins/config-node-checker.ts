@@ -57,6 +57,7 @@ module.exports = function (RED: NodeAPI) {
 				RED.log.debug("[firestore:plugin]: PUT '/config-node/scripts' for " + scriptName);
 
 				if (scriptName === "update-dependencies") {
+					// TODO: 404 vs 200 with error body
 					if (status.updateScriptCalled) throw new Error("Update Script already called");
 
 					// For now, we assume that the script can only be triggered once even if it fails.

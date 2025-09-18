@@ -62,6 +62,12 @@ export function loadInternalNRModule(name: string) {
 	return require(path);
 }
 
+/**
+ * Checks if the given version is higher than the required version
+ * @param requiredVersion The required version
+ * @param currentVersion The version to compare
+ * @returns `true` if the version is higher than the required version
+ */
 export function tinySemver(requiredVersion: number[], currentVersion: string): boolean {
 	const match = /([0-9])\.([0-9]+)\.([0-9]+)/.exec(currentVersion);
 
@@ -80,11 +86,16 @@ export function tinySemver(requiredVersion: number[], currentVersion: string): b
 	return false;
 }
 
+/**
+ * Checks if the config node has been installed in the correct directory so that NR can load it.
+ * @param RED The NodeAPI
+ * @returns `true` if the config node is loadable
+ */
 export function isConfigNodeLoadable(RED: NodeAPI): boolean {
 	const { userDir } = RED.settings;
 
 	if (!userDir) {
-		RED.log.debug("[firestore:plugin]: userDir not available");
+		RED.log.warn("[firestore:plugin]: 'userDir' setting not available");
 		return false;
 	}
 
