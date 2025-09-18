@@ -14,72 +14,9 @@
  * limitations under the License.
  */
 
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import { NodeAPI } from "node-red";
-
-/**
- * The required version of the {@link https://github.com/GogoVega/Firebase-Config-Node | Config Node}.
- *
- * WARNING: Do not change the name because it's used by the publish script!
- *
- * @internal
- */
-const requiredVersion = [0, 3, 0];
-
-/**
- * Cache system to not read files multiple times.
- *
- * Indeed the {@link checkConfigNodeSatisfiesVersion} function is called in the Firebase Class which
- * is the base of each Firebase node.
- *
- * @internal
- */
-const cacheResult = { cached: false, errorEmitted: false };
-
-/**
- * Checks if the {@link https://github.com/GogoVega/Firebase-Config-Node | Config Node} version matches
- * the version required by this Firestore palette.
- *
- * When installing this palette, NPM may install the Config Node inside the Firestore palette which results
- * that Node-RED not loading the correct version.
- *
- * @param RED The NodeAPI
- * @param version The current version of the Config Node
- * @returns `true` if the version of the Config Node is satisfied
- */
-function checkConfigNodeSatisfiesVersion(RED: NodeAPI, version: string): boolean {
-	if (cacheResult.errorEmitted) return false;
-	if (cacheResult.cached) return true;
-
-	cacheResult.cached = true;
-
-	const match = /([0-9])\.([0-9]+)\.([0-9]+)/.exec(version);
-	if (match) {
-		match.shift();
-
-		const [major, minor, patch] = match.map((v) => parseInt(v, 10));
-
-		if (
-			major > requiredVersion[0] ||
-			(major === requiredVersion[0] &&
-				(minor > requiredVersion[1] || (minor === requiredVersion[1] && patch >= requiredVersion[2])))
-		)
-			return true;
-
-		cacheResult.errorEmitted = true;
-
-		RED.log.error("FIRESTORE: The Config Node version does not meet the requirements of this palette.");
-		RED.log.error("  Required Version: " + requiredVersion.join("."));
-		RED.log.error("  Current Version:  " + version);
-		RED.log.error(
-			"  Please run the following command to resolve the issue:\n\n    cd ~/.node-red\n    npm update --omit=dev\n"
-		);
-
-		return false;
-	}
-
-	// Not supposed to happen
-	return true;
-}
 
 type Exec = Record<"run", (command: string, args: string[], option: object, emit: boolean) => Promise<object>>;
 
@@ -90,7 +27,7 @@ type Exec = Record<"run", (command: string, args: string[], option: object, emit
  * @param exec The `@node-red/util.exec` instance (because not imported to NodeAPI)
  * @returns A promise that resolves (rc=0) or rejects (rc!=0) when the command completes.
  */
-function runUpdateDependencies(RED: NodeAPI, exec: Exec): Promise<object> {
+export function runUpdateDependencies(RED: NodeAPI, exec: Exec): Promise<object> {
 	const isWindows = process.platform === "win32";
 	const npmCommand = isWindows ? "npm.cmd" : "npm";
 	const extraArgs = [
@@ -109,12 +46,60 @@ function runUpdateDependencies(RED: NodeAPI, exec: Exec): Promise<object> {
 }
 
 /**
- * Check if the Config Node version satisfies the required version by this palette.
- *
- * @returns `true` if the version is satisfied
+ * Some useful methods (and not critical) are not imported to NodeAPI,
+ * so it's a workaround to get them 🤫
+ * @param name The NR module to load
  */
-function versionIsSatisfied(): boolean {
-	return !cacheResult.errorEmitted;
+export function loadInternalNRModule(name: string) {
+	let path = join(process.env.NODE_RED_HOME || ".", "node_modules", name);
+
+	if (!existsSync(path)) {
+		// Some installations like FlowFuse use this path
+		path = join(process.env.NODE_RED_HOME || ".", "..", name);
+	}
+
+	// eslint-disable-next-line @typescript-eslint/no-require-imports
+	return require(path);
 }
 
-export { checkConfigNodeSatisfiesVersion, runUpdateDependencies, versionIsSatisfied };
+/**
+ * Checks if the given version is higher than the required version
+ * @param requiredVersion The required version
+ * @param currentVersion The version to compare
+ * @returns `true` if the version is higher than the required version
+ */
+export function tinySemver(requiredVersion: number[], currentVersion: string): boolean {
+	const match = /([0-9])\.([0-9]+)\.([0-9]+)/.exec(currentVersion);
+
+	if (match) {
+		match.shift();
+
+		const [major, minor, patch] = match.map((v) => parseInt(v, 10));
+
+		return (
+			major > requiredVersion[0] ||
+			(major === requiredVersion[0] &&
+				(minor > requiredVersion[1] || (minor === requiredVersion[1] && patch >= requiredVersion[2])))
+		);
+	}
+
+	return false;
+}
+
+/**
+ * Checks if the config node has been installed in the correct directory so that NR can load it.
+ * @param RED The NodeAPI
+ * @returns `true` if the config node is loadable
+ */
+export function isConfigNodeLoadable(RED: NodeAPI): boolean {
+	const { userDir } = RED.settings;
+
+	if (!userDir) {
+		RED.log.warn("[firestore:plugin]: 'userDir' setting not available");
+		return false;
+	}
+
+	const configNodePath = join(userDir, "node_modules", "@gogovega", "firebase-config-node");
+
+	return existsSync(configNodePath);
+}

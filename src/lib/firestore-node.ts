@@ -42,9 +42,8 @@ import {
 	NodeConfig,
 	OutgoingMessage,
 } from "./types";
-import { checkConfigNodeSatisfiesVersion } from "./utils";
 
-class Firestore<Node extends FirestoreNode, Config extends FirestoreConfig = NodeConfig<Node>> {
+export class Firestore<Node extends FirestoreNode, Config extends FirestoreConfig = NodeConfig<Node>> {
 	private readonly serviceType: ServiceType = "firestore";
 
 	/**
@@ -84,6 +83,12 @@ class Firestore<Node extends FirestoreNode, Config extends FirestoreConfig = Nod
 	];
 
 	/**
+	 * This property is used to indicate whether the config node version meets the version required by this palette.
+	 * If this is not the case, the nodes in this palette will not be active.
+	 */
+	public static configNodeSatisfiesVersion = false;
+
+	/**
 	 * This property contains the identifier of the timer used to define the error status of the node and will be used
 	 * to clear the timeout.
 	 */
@@ -110,7 +115,7 @@ class Firestore<Node extends FirestoreNode, Config extends FirestoreConfig = Nod
 			if (!isFirebaseConfigNode(node.database))
 				throw new Error("The selected database is not compatible with this module, please check your config-node");
 
-			if (!checkConfigNodeSatisfiesVersion(RED, node.database.version)) {
+			if (!Firestore.configNodeSatisfiesVersion) {
 				node.status({ fill: "red", shape: "ring", text: "Invalid Database Version!" });
 
 				// To avoid initializing the database (avoid creating unhandled errors)

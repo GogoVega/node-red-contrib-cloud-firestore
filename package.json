@@ -38,6 +38,10 @@
       "firestore-in": "build/nodes/firestore-in.js",
       "firestore-get": "build/nodes/firestore-get.js"
     },
+    "plugins": {
+      "firestore-config-node-checker": "build/plugins/config-node-checker.js",
+      "firestore-tours-runner": "build/plugins/tours-runner.html"
+    },
     "version": ">=3"
   },
   "dependencies": {
