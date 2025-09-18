@@ -81,7 +81,7 @@ module.exports = function (RED: NodeAPI) {
 			} catch (error) {
 				const msg = error instanceof Error ? error.toString() : (error as Record<"stderr", string>).stderr;
 
-				RED.log.error("[firestore:plugin]: An error occured while updating nodes dependencies: " + msg);
+				RED.log.error("[firestore:plugin]: An error occurred while updating nodes dependencies: " + msg);
 
 				res.json({
 					status: "error",
