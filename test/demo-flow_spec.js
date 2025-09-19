@@ -77,7 +77,7 @@ describe("Demo Flow tests", function () {
 					});
 
 					inject.receive(payload);
-				}, 1000);
+				}, 1500);
 			});
 		});
 	});
@@ -100,14 +100,14 @@ describe("Demo Flow tests", function () {
 							msg.payload.should.be.Object();
 							msg.payload.should.have.property("size", 0);
 							msg.payload.should.have.property("docs", {});
-							setTimeout(done, 1000);
+							setTimeout(done, 1500);
 						} catch (error) {
 							done(error);
 						}
 					});
 
 					inject.receive();
-				}, 1000);
+				}, 1500);
 			});
 		});
 
@@ -138,14 +138,14 @@ describe("Demo Flow tests", function () {
 									type: "added",
 								},
 							]);
-							setTimeout(done, 1000);
+							setTimeout(done, 1500);
 						} catch (error) {
 							done(error);
 						}
 					});
 
 					inject.receive();
-				}, 1000);
+				}, 1500);
 			});
 		});
 
@@ -177,14 +177,14 @@ describe("Demo Flow tests", function () {
 									type: "added",
 								},
 							]);
-							setTimeout(done, 1000);
+							setTimeout(done, 1500);
 						} catch (error) {
 							done(error);
 						}
 					});
 
 					inject.receive();
-				}, 1000);
+				}, 1500);
 			});
 		});
 
@@ -212,14 +212,14 @@ describe("Demo Flow tests", function () {
 									type: "modified",
 								},
 							]);
-							setTimeout(done, 1000);
+							setTimeout(done, 1500);
 						} catch (error) {
 							done(error);
 						}
 					});
 
 					inject.receive();
-				}, 1000);
+				}, 1500);
 			});
 		});
 
@@ -247,14 +247,14 @@ describe("Demo Flow tests", function () {
 									type: "modified",
 								},
 							]);
-							setTimeout(done, 1000);
+							setTimeout(done, 1500);
 						} catch (error) {
 							done(error);
 						}
 					});
 
 					inject.receive();
-				}, 1000);
+				}, 1500);
 			});
 		});
 
@@ -281,14 +281,14 @@ describe("Demo Flow tests", function () {
 									type: "removed",
 								},
 							]);
-							setTimeout(done, 1000);
+							setTimeout(done, 1500);
 						} catch (error) {
 							done(error);
 						}
 					});
 
 					inject.receive();
-				}, 1000);
+				}, 1500);
 			});
 		});
 	});
@@ -310,14 +310,14 @@ describe("Demo Flow tests", function () {
 							msg.should.have.property("payload");
 							msg.payload.should.be.Object();
 							msg.payload.should.have.property("index", 1);
-							setTimeout(done, 1000);
+							setTimeout(done, 1500);
 						} catch (error) {
 							done(error);
 						}
 					});
 
 					inject.receive();
-				}, 1000);
+				}, 1500);
 			});
 		});
 
@@ -334,7 +334,7 @@ describe("Demo Flow tests", function () {
 							msg.payload.should.be.Object();
 							msg.payload.should.have.property("index", count);
 							count++;
-							if (count > 6) setTimeout(done, 1000);
+							if (count > 6) setTimeout(done, 1500);
 						} catch (error) {
 							done(error);
 						}
@@ -343,7 +343,7 @@ describe("Demo Flow tests", function () {
 					for (let i = 0; i < 5; i++) {
 						inject.receive();
 					}
-				}, 1000);
+				}, 1500);
 			});
 		});
 
@@ -369,7 +369,7 @@ describe("Demo Flow tests", function () {
 					for (let i = 0; i < 6; i++) {
 						inject.receive();
 					}
-				}, 1000);
+				}, 1500);
 			});
 		});
 
@@ -401,7 +401,7 @@ describe("Demo Flow tests", function () {
 					});
 
 					inject.receive();
-				}, 1000);
+				}, 1500);
 			});
 		});
 
@@ -421,14 +421,14 @@ describe("Demo Flow tests", function () {
 							msg.should.have.property("payload");
 							msg.payload.should.be.Object();
 							msg.payload.should.have.property("array", []);
-							setTimeout(done, 1000);
+							setTimeout(done, 1500);
 						} catch (error) {
 							done(error);
 						}
 					});
 
 					inject.receive();
-				}, 1000);
+				}, 1500);
 			});
 		});
 
@@ -443,7 +443,7 @@ describe("Demo Flow tests", function () {
 							msg.should.have.property("payload");
 							msg.payload.should.be.Object();
 							msg.payload.should.have.property("array", ["bar"]);
-							setTimeout(done, 1000);
+							setTimeout(done, 1500);
 						} catch (error) {
 							done(error);
 						}
@@ -451,7 +451,7 @@ describe("Demo Flow tests", function () {
 
 					inject.receive();
 					inject.receive();
-				}, 1000);
+				}, 1500);
 			});
 		});
 
@@ -474,7 +474,7 @@ describe("Demo Flow tests", function () {
 
 					inject.receive();
 					inject.receive();
-				}, 1000);
+				}, 1500);
 			});
 		});
 	});
