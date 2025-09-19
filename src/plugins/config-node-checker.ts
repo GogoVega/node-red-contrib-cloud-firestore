@@ -97,7 +97,7 @@ module.exports = function (RED: NodeAPI) {
 		onadd: function () {
 			RED.log.debug("[firestore:plugin]: Firestore Config Node Checker started");
 
-			const onRuntimeStarted = function () {
+			const checker = function () {
 				try {
 					const { getModuleInfo } = loadInternalNRModule("@node-red/registry");
 					const configNode = getModuleInfo("@gogovega/firebase-config-node");
@@ -121,6 +121,16 @@ module.exports = function (RED: NodeAPI) {
 							RED.log.error("\tCurrent Version:  " + status.version);
 							RED.log.error("\tPlease to resolve the issue run:\n\ncd ~/.node-red\nnpm update --omit=dev\n");
 						}
+					} else {
+						RED.log.error("[firestore:plugin]: Config node NOT registered");
+
+						if (isConfigNodeLoadable(RED)) {
+							RED.log.warn("[firestore:plugin]: Please restarts Node-RED to load the config node");
+							status.loadable = true;
+						} else {
+							RED.log.warn("[firestore:plugin]: The config node was not installed in the correct directory by NPM");
+							RED.log.warn("[firestore:plugin]: Please run:\n\ncd ~/.node-red\nnpm update --omit=dev\n");
+						}
 					}
 				} catch (error) {
 					RED.log.warn("[firestore:plugin]: Unable to determine the config node version");
@@ -130,28 +140,14 @@ module.exports = function (RED: NodeAPI) {
 				}
 
 				// To do a once event
-				RED.events.off("flows:started", onRuntimeStarted);
+				RED.events.off("runtime-event", checker);
+				RED.events.off("flows:started", checker);
 			};
 
-			const onPaletteMissing = function (event: { payload?: { error?: string } }) {
-				if (!event.payload || event.payload.error !== "missing-types") return;
-
-				RED.log.error("[firestore:plugin]: Config node NOT registered");
-
-				if (isConfigNodeLoadable(RED)) {
-					RED.log.warn("[firestore:plugin]: Please restarts Node-RED to load the config node");
-					status.loadable = true;
-				} else {
-					RED.log.warn("[firestore:plugin]: The config node was not installed in the correct directory by NPM");
-					RED.log.warn("[firestore:plugin]: Please run:\n\ncd ~/.node-red\nnpm update --omit=dev\n");
-				}
-
-				// To do a once event
-				RED.events.off("runtime-event", onPaletteMissing);
-			};
-
-			RED.events.on("runtime-event", onPaletteMissing);
-			RED.events.on("flows:started", onRuntimeStarted);
+			// On missing node types - existing install
+			RED.events.on("runtime-event", checker);
+			// For new/clean install
+			RED.events.on("flows:started", checker);
 		},
 	});
 };
