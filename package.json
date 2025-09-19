@@ -9,7 +9,7 @@
     "clean": "rimraf build/lib build/**/*.js",
     "lint": "eslint . --ext .ts",
     "format": "prettier --write \"**/*.{md,ts}\"",
-    "test": "mocha './test/**/*_spec.js' --exit"
+    "test": "mocha './test/**/*_spec.js' --exit --timeout 10000"
   },
   "repository": {
     "type": "git",
@@ -52,7 +52,9 @@
     "@typescript-eslint/eslint-plugin": "^8.42.0",
     "@typescript-eslint/parser": "^8.42.0",
     "eslint": "^8.57.1",
+    "mocha": "^11.7.2",
     "node-red": "^4.1.0",
+    "node-red-node-test-helper": "^0.3.5",
     "prettier": "^3.6.2",
     "typescript": "^5.9.2"
   },
