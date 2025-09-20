@@ -57,7 +57,7 @@ module.exports = function (RED: NodeAPI) {
 				RED.log.debug("[firestore:plugin]: PUT '/config-node/scripts' for " + scriptName);
 
 				if (scriptName === "update-dependencies") {
-					// TODO: 404 vs 200 with error body
+					// TODO: 204 vs 200 with error body
 					if (status.updateScriptCalled) throw new Error("Update Script already called");
 
 					// For now, we assume that the script can only be triggered once even if it fails.
@@ -71,6 +71,44 @@ module.exports = function (RED: NodeAPI) {
 
 					// TODO: Green with chalk
 					RED.log.info("[firestore:plugin]: Successfully updated nodes dependencies. Please restarts Node-RED.");
+				} else if (scriptName === "load-config-node") {
+					const { addModule } = loadInternalNRModule("@node-red/registry");
+
+					RED.log.warn("[firestore:plugin]: Starting to load the config node...");
+
+					// When Firestore nodes are installed from the Palette Manager, the process works as follows:
+					// - the runtime installs the package via NPM,
+					// - the registry locates the directory (based on package name) and reads the package.json,
+					// - the registry then loads all nodes defined by the package.json.
+					//
+					// The issue with the Firestore palette is that the config node is located inside a dependency.
+					// However, nothing in the package.json instructs the registry to load that dependency’s config node directly.
+					//
+					// Before suggesting a solution to the Node-RED team, my goal is to avoid the most common problem:
+					// having to restart Node-RED after installing from the Palette Manager.
+					//
+					// If the config node is placed in the correct directory, Node-RED will be able to load it automatically
+					// on the next restart. In that case, I could consider forcing its loading to avoid requiring a restart.
+					//
+					// If the config node is not directly loadable, I could still forcing its loading since I know all possible
+					// directories where it may reside. However, before doing so, I would need to study how the registry works
+					// in detail to understand what risks this approach could introduce or potentially break.
+					if (!status.loaded && status.loadable) {
+						const info = await addModule("@gogovega/firebase-config-node");
+						RED.events.emit("runtime-event", { id: "node/added", retain: false, payload: info.nodes });
+						status.loaded = true;
+						res.sendStatus(201);
+						return;
+					} else if (!status.loadable) {
+						res.json({
+							status: "error",
+							msg: "The config node is not loadable",
+						});
+						return;
+					} else {
+						res.sendStatus(204);
+						return;
+					}
 				} else {
 					// Forbidden
 					res.sendStatus(403);
@@ -80,8 +118,9 @@ module.exports = function (RED: NodeAPI) {
 				res.json({ status: "success" });
 			} catch (error) {
 				const msg = error instanceof Error ? error.toString() : (error as Record<"stderr", string>).stderr;
+				const action = req.body.script === "update-dependencies" ? "updating nodes dependencies" : "loading the config node";
 
-				RED.log.error("[firestore:plugin]: An error occurred while updating nodes dependencies: " + msg);
+				RED.log.error(`[firestore:plugin]: An error occurred while ${action}: ` + msg);
 
 				res.json({
 					status: "error",
