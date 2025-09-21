@@ -1,5 +1,22 @@
 # Change log
 
+## 0.2.1-beta.1
+
+### Enhances
+
+- Add unit tests for `demo-flow` example (#27)
+- Experimental: Force load config node to avoid restarting NR (#30)
+
+### Fixes
+
+- The config node checker for new installs (#28)
+- Avoid concurrency for `Tests` workflow (#29)
+
+### Improves
+
+- Move the Config Node Checker to a Plugin (#25)
+- Move the tours runner to a Plugin (#26)
+
 ## 0.2.0
 
 ### Breaking Changes

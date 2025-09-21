@@ -1,6 +1,6 @@
 {
   "name": "@gogovega/node-red-contrib-cloud-firestore",
-  "version": "0.2.0",
+  "version": "0.2.1-beta.1",
   "description": "Node-RED nodes to communicate with Google Cloud Firestore",
   "main": "build/nodes/firestore-in.js",
   "scripts": {
