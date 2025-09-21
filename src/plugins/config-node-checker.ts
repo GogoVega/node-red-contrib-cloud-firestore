@@ -46,7 +46,7 @@ module.exports = function (RED: NodeAPI) {
 		}
 	);
 
-	// Run the Update Script
+	// Run the Update/Load Script
 	RED.httpAdmin.put(
 		"/firebase/firestore/config-node/scripts",
 		RED.auth.needsPermission("firestore-out.write"),
@@ -118,9 +118,12 @@ module.exports = function (RED: NodeAPI) {
 				res.json({ status: "success" });
 			} catch (error) {
 				const msg = error instanceof Error ? error.toString() : (error as Record<"stderr", string>).stderr;
-				const action = req.body.script === "update-dependencies" ? "updating nodes dependencies" : "loading the config node";
+				const action: Record<string, string> = {
+					"update-dependencies": "updating nodes dependencies",
+					"load-config-node": "loading the config node",
+				};
 
-				RED.log.error(`[firestore:plugin]: An error occurred while ${action}: ` + msg);
+				RED.log.error(`[firestore:plugin]: An error occurred while ${action[req.body.script]}: ` + msg);
 
 				res.json({
 					status: "error",

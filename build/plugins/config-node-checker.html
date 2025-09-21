@@ -48,8 +48,6 @@
 									}
 								};
 							} else if (button === "Confirm Update") {
-								const path = "firebase/firestore/config-node/scripts";
-
 								return {
 									text: "Confirm",
 									click: (event) => {
@@ -60,7 +58,7 @@
 
 										$.ajax({
 											method: "PUT",
-											url: path,
+											url: "firebase/firestore/config-node/scripts",
 											data: { script: "update-dependencies" },
 											success: function (resp) {
 												spinner.remove();
@@ -111,8 +109,6 @@
 									}
 								};
 							} else if (button === "Load Config Node") {
-								const path = "firebase/firestore/config-node/scripts";
-
 								return {
 									text: button,
 									class: "pull-left",
@@ -123,7 +119,7 @@
 
 										$.ajax({
 											method: "PUT",
-											url: path,
+											url: "firebase/firestore/config-node/scripts",
 											data: { script: "load-config-node" },
 											success: function (resp) {
 												spinner.remove();
@@ -191,7 +187,7 @@
 					break;
 				case "restart":
 					msg = restartMsg;
-					buttons = ["Load Config Node", "Close"]
+					buttons = ["Load Config Node", "Close"];
 					break;
 				case "restart-update":
 					msg = restartAfterUpdateMsg;
@@ -250,7 +246,7 @@
 							} else {
 								// All ready => run the 'First flow' guide
 								const plugin = RED.plugins.getPlugin("firestore-tours-runner");
-								
+
 								if (plugin && typeof plugin.runner === "function") {
 									plugin.runner();
 								}
