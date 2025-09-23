@@ -23,7 +23,7 @@
 	(function () {
 		const redVersion = (RED.settings.version || "0.0.0").split(".").map((s) => Number(s));
 
-		// If NR < 4.1.1 load manually plugins to avoid to reload the browser. See NR#5277.
+		// If NR < 4.1.1 load plugins manually to avoid reloading the browser. See NR#5277.
 		if (redVersion[0] < 4 || (redVersion[0] === 4 && (redVersion[1] < 1 || (redVersion[1] === 1 && redVersion[2] < 1)))) {
 			if (RED.plugins.getPlugin("firestore-config-node-checker")) return;
 
@@ -32,7 +32,7 @@
 				RED.comms.send("notification/plugin/added", data.plugins);
 			});
 		}
-	})()
+	})();
 </script>
 
 <script type="text/javascript">

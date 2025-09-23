@@ -143,7 +143,7 @@ module.exports = function (RED: NodeAPI) {
 
 			const checker = function (event: object) {
 				// Skip unrelated event
-				// TODO: ignorer node/added à vérifier
+				// TODO: verify if node/added should be ignored
 				if (
 					"id" in event &&
 					typeof event.id === "string" &&
