@@ -220,6 +220,12 @@
 			onadd: function () {
 				console.log("[firestore:plugin]: Firestore Config Node Checker started");
 
+				// NR#5276 - avoid to register twice - installation by the Palette Manager
+				if (RED.plugins.getPlugin("firestore-tours-runner")) {
+					console.warn("[firestore:plugin]: Firestore Config Node Checker already registered");
+					return;
+				}
+
 				const checker = function () {
 					$.getJSON("firebase/firestore/config-node/status", function (result) {
 						if (!result.loaded) {
