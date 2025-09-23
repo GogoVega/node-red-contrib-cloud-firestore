@@ -95,6 +95,8 @@ module.exports = function (RED: NodeAPI) {
 					// in detail to understand what risks this approach could introduce or potentially break.
 					if (!status.loaded && status.loadable) {
 						const info = await addModule("@gogovega/firebase-config-node");
+						RED.log.info(RED._("runtime:server.added-types"));
+						RED.log.info(" - @gogovega/firebase-config-node:firebase-config");
 						RED.events.emit("runtime-event", { id: "node/added", retain: false, payload: info.nodes });
 						status.loaded = true;
 						res.sendStatus(201);
@@ -139,7 +141,16 @@ module.exports = function (RED: NodeAPI) {
 		onadd: function () {
 			RED.log.debug("[firestore:plugin]: Firestore Config Node Checker started");
 
-			const checker = function () {
+			const checker = function (event: object) {
+				// Skip unrelated event
+				// TODO: verify if node/added should be ignored
+				if (
+					"id" in event &&
+					typeof event.id === "string" &&
+					!["runtime-state", "node/added", "plugin/added"].includes(event.id)
+				)
+					return;
+
 				try {
 					const { getModuleInfo } = loadInternalNRModule("@node-red/registry");
 					const configNode = getModuleInfo("@gogovega/firebase-config-node");
@@ -186,9 +197,10 @@ module.exports = function (RED: NodeAPI) {
 				RED.events.off("flows:started", checker);
 			};
 
-			// On missing node types - existing install
+			// On plugin added - called during installation by Palette Manager
+			// On missing node types - called during NR startup
 			RED.events.on("runtime-event", checker);
-			// For new/clean install
+			// For new/clean install - called during NR startup
 			RED.events.on("flows:started", checker);
 		},
 	});
