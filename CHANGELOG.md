@@ -1,5 +1,15 @@
 # Change log
 
+## 0.2.1-beta.2
+
+### Fixes
+
+- Fix installations from the Palette Manager (#33)
+
+### Improves
+
+- Load UI scripts from Plugins (#32)
+
 ## 0.2.1-beta.1
 
 ### Enhances
