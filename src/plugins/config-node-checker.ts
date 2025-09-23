@@ -95,6 +95,8 @@ module.exports = function (RED: NodeAPI) {
 					// in detail to understand what risks this approach could introduce or potentially break.
 					if (!status.loaded && status.loadable) {
 						const info = await addModule("@gogovega/firebase-config-node");
+						RED.log.info(RED._("runtime:server.added-types"));
+						RED.log.info(" - @gogovega/firebase-config-node:firebase-config");
 						RED.events.emit("runtime-event", { id: "node/added", retain: false, payload: info.nodes });
 						status.loaded = true;
 						res.sendStatus(201);
