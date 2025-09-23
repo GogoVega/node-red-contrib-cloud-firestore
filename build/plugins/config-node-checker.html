@@ -254,10 +254,15 @@
 						}
 					});
 
-					RED.events.off("runtime-state", checker);
+					RED.events.off("flows:loaded", checker);
 				};
 
-				RED.events.on("runtime-state", checker);
+				if ($("#red-ui-loading-progress").css("display") === "none") {
+					// Palette installed by the Palette Manager
+					checker();
+				} else {
+					RED.events.on("flows:loaded", checker);
+				}
 			}
 		});
 	})();
