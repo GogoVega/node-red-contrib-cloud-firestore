@@ -113,7 +113,6 @@ module.exports = function (RED: NodeAPI) {
 				RED.log.debug("[firestore:plugin]: PUT '/config-node/scripts' for " + scriptName);
 
 				if (scriptName === "update-dependencies") {
-					// TODO: 204 vs 200 with error body
 					if (status.updateScriptCalled) throw new Error("Update Script already called");
 
 					// For now, we assume that the script can only be triggered once even if it fails.
@@ -171,6 +170,16 @@ module.exports = function (RED: NodeAPI) {
 						res.sendStatus(204);
 						return;
 					}
+				} else if (scriptName === "load-plugins") {
+					// Plugins are not loaded into the editor if installed by Palette Manager. See NR#5277.
+					const { getModuleInfo } = loadInternalNRModule("@node-red/registry");
+					const info = getModuleInfo("@gogovega/node-red-contrib-cloud-firestore");
+
+					// Notify the editor to load plugins
+					RED.events.emit("runtime-event", { id: "plugin/added", retain: false, payload: info.plugins });
+
+					res.sendStatus(204);
+					return;
 				} else {
 					// Forbidden
 					res.sendStatus(403);
@@ -183,6 +192,7 @@ module.exports = function (RED: NodeAPI) {
 				const action: Record<string, string> = {
 					"update-dependencies": "updating nodes dependencies",
 					"load-config-node": "loading the config node",
+					"load-plugins": "notifying the editor to load plugins",
 				};
 
 				RED.log.error(`[firestore:plugin]: An error occurred while ${action[req.body.script]}: ` + msg);
