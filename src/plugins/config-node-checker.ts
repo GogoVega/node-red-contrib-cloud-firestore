@@ -73,7 +73,7 @@ module.exports = function (RED: NodeAPI) {
 				RED.log.error("[firestore:plugin]: Config node NOT registered");
 
 				if (isConfigNodeLoadable(RED)) {
-					RED.log.warn("[firestore:plugin]: Please restarts Node-RED to load the config node");
+					RED.log.warn("[firestore:plugin]: Please restart Node-RED to load the config node");
 					status.loadable = true;
 				} else {
 					RED.log.warn("[firestore:plugin]: The config node was not installed in the correct directory by NPM");
