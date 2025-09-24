@@ -36,6 +36,62 @@ module.exports = function (RED: NodeAPI) {
 		updateScriptCalled: false,
 	};
 
+	// The Config Node Checker
+	const checker = function (event?: object) {
+		// Skip unrelated event
+		// TODO: verify if node/added should be ignored
+		if (
+			event &&
+			"id" in event &&
+			typeof event.id === "string" &&
+			!["runtime-state", "node/added", "plugin/added"].includes(event.id)
+		)
+			return;
+
+		try {
+			const { getModuleInfo } = loadInternalNRModule("@node-red/registry");
+			const configNode = getModuleInfo("@gogovega/firebase-config-node");
+
+			if (configNode) {
+				status.loadable = true;
+				status.loaded = true;
+				status.version = configNode.version;
+
+				RED.log.debug("[firestore:plugin]: Config node v" + status.version + " registered");
+
+				if (tinySemver(requiredVersion, status.version)) {
+					status.versionIsSatisfied = true;
+					Firestore.configNodeSatisfiesVersion = true;
+				} else {
+					Firestore.configNodeSatisfiesVersion = false;
+					RED.log.error("[firestore:plugin]: The Config Node version does not meet the requirements of this palette.");
+					RED.log.error("\tRequired Version: " + requiredVersion.join("."));
+					RED.log.error("\tCurrent Version:  " + status.version);
+					RED.log.error("\tPlease to resolve the issue run:\n\ncd ~/.node-red\nnpm update --omit=dev\n");
+				}
+			} else {
+				RED.log.error("[firestore:plugin]: Config node NOT registered");
+
+				if (isConfigNodeLoadable(RED)) {
+					RED.log.warn("[firestore:plugin]: Please restart Node-RED to load the config node");
+					status.loadable = true;
+				} else {
+					RED.log.warn("[firestore:plugin]: The config node was not installed in the correct directory by NPM");
+					RED.log.warn("[firestore:plugin]: Please run:\n\ncd ~/.node-red\nnpm update --omit=dev\n");
+				}
+			}
+		} catch (error) {
+			RED.log.warn("[firestore:plugin]: Unable to determine the config node version");
+			RED.log.debug("[firestore:plugin]: Failed to load 'getModuleInfo': " + error);
+			// Checker failed; config node may have been loaded correctly - let the user worry about that
+			Firestore.configNodeSatisfiesVersion = true;
+		}
+
+		// To do a once event
+		RED.events.off("runtime-event", checker);
+		RED.events.off("flows:started", checker);
+	};
+
 	// Check if the Config Node version satisfies the require one
 	RED.httpAdmin.get(
 		"/firebase/firestore/config-node/status",
@@ -57,7 +113,6 @@ module.exports = function (RED: NodeAPI) {
 				RED.log.debug("[firestore:plugin]: PUT '/config-node/scripts' for " + scriptName);
 
 				if (scriptName === "update-dependencies") {
-					// TODO: 204 vs 200 with error body
 					if (status.updateScriptCalled) throw new Error("Update Script already called");
 
 					// For now, we assume that the script can only be triggered once even if it fails.
@@ -95,10 +150,14 @@ module.exports = function (RED: NodeAPI) {
 					// in detail to understand what risks this approach could introduce or potentially break.
 					if (!status.loaded && status.loadable) {
 						const info = await addModule("@gogovega/firebase-config-node");
+
 						RED.log.info(RED._("runtime:server.added-types"));
 						RED.log.info(" - @gogovega/firebase-config-node:firebase-config");
 						RED.events.emit("runtime-event", { id: "node/added", retain: false, payload: info.nodes });
-						status.loaded = true;
+
+						// Call the Config Node Checker
+						checker();
+
 						res.sendStatus(201);
 						return;
 					} else if (!status.loadable) {
@@ -111,6 +170,16 @@ module.exports = function (RED: NodeAPI) {
 						res.sendStatus(204);
 						return;
 					}
+				} else if (scriptName === "load-plugins") {
+					// Plugins are not loaded into the editor if installed by Palette Manager. See NR#5277.
+					const { getModuleInfo } = loadInternalNRModule("@node-red/registry");
+					const info = getModuleInfo("@gogovega/node-red-contrib-cloud-firestore");
+
+					// Notify the editor to load plugins
+					RED.events.emit("runtime-event", { id: "plugin/added", retain: false, payload: info.plugins });
+
+					res.sendStatus(204);
+					return;
 				} else {
 					// Forbidden
 					res.sendStatus(403);
@@ -123,6 +192,7 @@ module.exports = function (RED: NodeAPI) {
 				const action: Record<string, string> = {
 					"update-dependencies": "updating nodes dependencies",
 					"load-config-node": "loading the config node",
+					"load-plugins": "notifying the editor to load plugins",
 				};
 
 				RED.log.error(`[firestore:plugin]: An error occurred while ${action[req.body.script]}: ` + msg);
@@ -140,62 +210,6 @@ module.exports = function (RED: NodeAPI) {
 		type: "firebase-config-node-checker",
 		onadd: function () {
 			RED.log.debug("[firestore:plugin]: Firestore Config Node Checker started");
-
-			const checker = function (event: object) {
-				// Skip unrelated event
-				// TODO: verify if node/added should be ignored
-				if (
-					"id" in event &&
-					typeof event.id === "string" &&
-					!["runtime-state", "node/added", "plugin/added"].includes(event.id)
-				)
-					return;
-
-				try {
-					const { getModuleInfo } = loadInternalNRModule("@node-red/registry");
-					const configNode = getModuleInfo("@gogovega/firebase-config-node");
-
-					if (configNode) {
-						status.loadable = true;
-						status.loaded = true;
-						status.version = configNode.version;
-
-						RED.log.debug("[firestore:plugin]: Config node v" + status.version + " registered");
-
-						if (tinySemver(requiredVersion, status.version)) {
-							status.versionIsSatisfied = true;
-							Firestore.configNodeSatisfiesVersion = true;
-						} else {
-							Firestore.configNodeSatisfiesVersion = false;
-							RED.log.error(
-								"[firestore:plugin]: The Config Node version does not meet the requirements of this palette."
-							);
-							RED.log.error("\tRequired Version: " + requiredVersion.join("."));
-							RED.log.error("\tCurrent Version:  " + status.version);
-							RED.log.error("\tPlease to resolve the issue run:\n\ncd ~/.node-red\nnpm update --omit=dev\n");
-						}
-					} else {
-						RED.log.error("[firestore:plugin]: Config node NOT registered");
-
-						if (isConfigNodeLoadable(RED)) {
-							RED.log.warn("[firestore:plugin]: Please restarts Node-RED to load the config node");
-							status.loadable = true;
-						} else {
-							RED.log.warn("[firestore:plugin]: The config node was not installed in the correct directory by NPM");
-							RED.log.warn("[firestore:plugin]: Please run:\n\ncd ~/.node-red\nnpm update --omit=dev\n");
-						}
-					}
-				} catch (error) {
-					RED.log.warn("[firestore:plugin]: Unable to determine the config node version");
-					RED.log.debug("[firestore:plugin]: Failed to load 'getModuleInfo': " + error);
-					// Checker failed; config node may have been loaded correctly - let the user worry about that
-					Firestore.configNodeSatisfiesVersion = true;
-				}
-
-				// To do a once event
-				RED.events.off("runtime-event", checker);
-				RED.events.off("flows:started", checker);
-			};
 
 			// On plugin added - called during installation by Palette Manager
 			// On missing node types - called during NR startup
