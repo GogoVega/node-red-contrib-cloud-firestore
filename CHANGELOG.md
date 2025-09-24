@@ -1,10 +1,17 @@
 # Change log
 
+## 0.2.1-beta.3
+
+### Fixes
+
+- Handle NR beta version (https://github.com/GogoVega/node-red-contrib-cloud-firestore/commit/d40c8cbcc2bb263fe2fff524ad696fa302733860)
+- Installations from the Palette Manager again (#35)
+
 ## 0.2.1-beta.2
 
 ### Fixes
 
-- Fix installations from the Palette Manager (#33)
+- Installations from the Palette Manager (#33)
 
 ### Improves
 
