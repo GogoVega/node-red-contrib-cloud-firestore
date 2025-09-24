@@ -123,9 +123,13 @@ var FirestoreUI = FirestoreUI || (function () {
 					return FirestoreUI.validators.path(Object.assign({ allowBlank: allowBlank, allowSlash: allowSlash }, opts))(value, opt);
 				}
 
+				// NR version
+				const match = /([0-9]+)\.([0-9]+)\.([0-9]+)/.exec(RED.settings.version || "0.0.0");
+				match?.shift();
+
 				// If NR version >= 3.1.3 use the new validators
-				const redVersion = (RED.settings.version || "0.0.0").split(".").map((s) => Number(s));
-				if (redVersion[0] > 3 || (redVersion[0] === 3 && (redVersion[1] > 1 || (redVersion[1] === 1 && redVersion[2] >= 3))))
+				const [major, minor, patch] = match?.map((v) => parseInt(v, 10)) || [0, 0, 0];
+				if (major > 3 || (major === 3 && (minor > 1 || (minor === 1 && patch >= 3))))
 					return RED.validators.typedInput(options).call(this, value, opt);
 
 				// Workaround for NR#4440 to pass type
