@@ -31,4 +31,5 @@ export interface Util {
 export interface Registry {
 	addModule(name: string): Promise<ModuleInfo>;
 	getModuleInfo(name: string): ModuleInfo | null;
+	removeModule(name: string, skipSave?: boolean): { id: string }[];
 }
