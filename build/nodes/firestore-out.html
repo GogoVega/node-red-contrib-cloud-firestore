@@ -14,8 +14,41 @@
   limitations under the License.
 -->
 
-<!-- Load Scripts -->
+<!-- Load Script -->
 <script type="text/javascript" src="resources/@gogovega/node-red-contrib-cloud-firestore/common.js"></script>
+
+<script type="text/javascript">
+	"use strict";
+
+	(function () {
+		if (!RED.plugins.getPlugin("firestore-config-node-checker")) {
+			const match = /([0-9]+)\.([0-9]+)\.([0-9]+)/.exec(RED.settings.version || "0.0.0");
+			match?.shift();
+
+			// If NR < 4.1.1 load plugins manually to avoid reloading the browser. See NR#5277.
+			const [major, minor, patch] = match?.map((v) => parseInt(v, 10)) || [0, 0, 0];
+			if (major < 4 || (major === 4 && (minor < 1 || (minor === 1 && patch < 1)))) {
+				console.log("[firestore:plugin]: loading plugins...");
+				$.ajax({
+					type: "PUT",
+					url: "/firebase/firestore/config-node/scripts",
+					data: { script: "load-plugins" },
+					beforeSend: function (jqXHR) {
+						const authTokens = RED.settings.get("auth-tokens");
+						jqXHR.setRequestHeader("Authorization", `Bearer ${authTokens?.access_token}`);
+					},
+					success: () => console.log("[firestore:plugin]: plugins loaded"),
+					error: (jqXHR, _textStatus, errorThrown) => console.error(`${errorThrown}: ${jqXHR.responseText}`),
+				});
+			} else {
+				console.warn("[firestore:plugin]: Plugins not loaded");
+				console.warn("[firestore:plugin]: Please report this issue with log details at:");
+				console.warn("https://github.com/GogoVega/node-red-contrib-cloud-firestore/issues/new?template=bug_report.yml&title=Plugins%20were%20not%20loaded%20into%20the%20editor");
+				RED.notify("Firestore Plugins not loaded! See logs.", "warning");
+			}
+		}
+	})();
+</script>
 
 <script type="text/javascript">
 	"use strict";

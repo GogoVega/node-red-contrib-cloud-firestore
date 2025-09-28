@@ -1,5 +1,39 @@
 # Change log
 
+## 0.2.1-beta.3
+
+### Fixes
+
+- Handle NR beta version (https://github.com/GogoVega/node-red-contrib-cloud-firestore/commit/d40c8cbcc2bb263fe2fff524ad696fa302733860)
+- Installations from the Palette Manager again (#35)
+
+## 0.2.1-beta.2
+
+### Fixes
+
+- Installations from the Palette Manager (#33)
+
+### Improves
+
+- Load UI scripts from Plugins (#32)
+
+## 0.2.1-beta.1
+
+### Enhances
+
+- Add unit tests for `demo-flow` example (#27)
+- Experimental: Force load config node to avoid restarting NR (#30)
+
+### Fixes
+
+- The config node checker for new installs (#28)
+- Avoid concurrency for `Tests` workflow (#29)
+
+### Improves
+
+- Move the Config Node Checker to a Plugin (#25)
+- Move the tours runner to a Plugin (#26)
+
 ## 0.2.0
 
 ### Breaking Changes

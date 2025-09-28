@@ -48,8 +48,6 @@
 									}
 								};
 							} else if (button === "Confirm Update") {
-								const path = "firebase/firestore/config-node/scripts";
-
 								return {
 									text: "Confirm",
 									click: (event) => {
@@ -60,7 +58,7 @@
 
 										$.ajax({
 											method: "PUT",
-											url: path,
+											url: "firebase/firestore/config-node/scripts",
 											data: { script: "update-dependencies" },
 											success: function (resp) {
 												spinner.remove();
@@ -110,6 +108,26 @@
 										}]);
 									}
 								};
+							} else if (button === "Load Config Node") {
+								return {
+									text: button,
+									class: "pull-left",
+									click: (event) => {
+										if (!window.confirm("Are you really sure you want to do this?")) return;
+
+										const spinner = RED.utils.addSpinnerOverlay($(event.target));
+
+										$.ajax({
+											method: "PUT",
+											url: "firebase/firestore/config-node/scripts",
+											data: { script: "load-config-node" },
+											success: function (resp) {
+												spinner.remove();
+												myNotification.close();
+											}
+										});
+									}
+								};
 							} else {
 								console.error("Unknown button", button);
 								return {};
@@ -124,15 +142,21 @@
 			const refreshMsg = `
 			<html>
 				<p>Welcome to Google Cloud Firestore</p>
-				<p>Oops, it looks like your browser didn't load the Firestore nodes 😬</p>
+				<p>Oops, it looks like your browser didn't load all Firestore nodes 😬</p>
 				<p>Please reload your browser 😁</p>
 			</html>`;
 			const restartMsg = `
 			<html>
-				<p>Welcome to Google Cloud Firestore</p>
-				<p>To use this palette of nodes, please restart Node-RED. If you are using FlowFuse, suspend then start the instance.</p>
-				<p>A restart is needed because Node-RED did not load all nodes correctly.</p>
-				<p>Read more about this issue <a href="https://github.com/GogoVega/node-red-contrib-firebase-realtime-database/discussions/50">here</a>.</p>
+				<h3>Welcome to Google Cloud Firestore</h3>
+				<h4>🔄 Action Required</h4>
+				<p>To use this node palette, you need to restart <strong>Node-RED</strong>.</p>
+				<ul>
+					<li>If you are running <strong>FlowFuse</strong>, suspend and then restart the instance.</li>
+				</ul>
+				<p>This step is necessary because Node-RED did not load the config node.</p>
+				<h4>⚠️ Experimental Alternative</h4>
+				<p>You can try loading the config node, but this method is still experimental and may not work in all cases.</p>
+				<p>👉 <a href="https://github.com/GogoVega/node-red-contrib-firebase-realtime-database/discussions/50" target="_blank">Learn more about this issue</a></p>
 			</html>`;
 			const restartAfterUpdateMsg = `
 			<html>
@@ -163,6 +187,7 @@
 					break;
 				case "restart":
 					msg = restartMsg;
+					buttons = ["Load Config Node", "Close"];
 					break;
 				case "restart-update":
 					msg = restartAfterUpdateMsg;
@@ -195,6 +220,12 @@
 			onadd: function () {
 				console.log("[firestore:plugin]: Firestore Config Node Checker started");
 
+				// NR#5276 - avoid to register twice - installation by the Palette Manager
+				if (RED.plugins.getPlugin("firestore-tours-runner")) {
+					console.warn("[firestore:plugin]: Firestore Config Node Checker already registered");
+					return;
+				}
+
 				const checker = function () {
 					$.getJSON("firebase/firestore/config-node/status", function (result) {
 						if (!result.loaded) {
@@ -221,7 +252,7 @@
 							} else {
 								// All ready => run the 'First flow' guide
 								const plugin = RED.plugins.getPlugin("firestore-tours-runner");
-								
+
 								if (plugin && typeof plugin.runner === "function") {
 									plugin.runner();
 								}
@@ -229,10 +260,15 @@
 						}
 					});
 
-					RED.events.off("runtime-state", checker);
+					RED.events.off("flows:loaded", checker);
 				};
 
-				RED.events.on("runtime-state", checker);
+				if ($("#red-ui-loading-progress").css("display") === "none") {
+					// Palette installed by the Palette Manager
+					checker();
+				} else {
+					RED.events.on("flows:loaded", checker);
+				}
 			}
 		});
 	})();
