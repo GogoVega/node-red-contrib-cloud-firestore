@@ -15,6 +15,7 @@
 ### Fixes
 
 - Handle NR beta version (https://github.com/GogoVega/node-red-contrib-cloud-firestore/commit/d40c8cbcc2bb263fe2fff524ad696fa302733860)
+- Remove the config node module when uninstalling the Palette (#41)
 
 ### Improves
 
