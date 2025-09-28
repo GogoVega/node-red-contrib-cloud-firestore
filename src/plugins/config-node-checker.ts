@@ -82,7 +82,7 @@ module.exports = function (RED: NodeAPI) {
 				try {
 					configNodeLoadable = isConfigNodeLoadable(RED);
 				} catch (error) {
-					RED.log.warn("[rtdb:plugin]: " + (error as Error).message);
+					RED.log.warn("[firestore:plugin]: " + (error as Error).message);
 				}
 
 				if (configNodeLoadable) {
@@ -189,7 +189,7 @@ module.exports = function (RED: NodeAPI) {
 					const info = getModuleInfo("@gogovega/node-red-contrib-cloud-firestore");
 
 					// Notify the editor to load plugins
-					RED.events.emit("runtime-event", { id: "plugin/added", retain: false, payload: info?.plugins });
+					RED.events.emit("runtime-event", { id: "plugin/added", retain: false, payload: info?.plugins || [] });
 
 					res.sendStatus(204);
 					return;
