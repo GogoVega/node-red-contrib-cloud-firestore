@@ -15,8 +15,14 @@
  */
 
 import { NodeAPI } from "node-red";
+import {
+	isConfigNodeLoadable,
+	loadInternalNRModule,
+	runUpdateDependencies,
+	tinySemver,
+} from "@gogovega/firebase-config-node/utils";
 import { Firestore } from "../lib/firestore-node";
-import { isConfigNodeLoadable, loadInternalNRModule, runUpdateDependencies, tinySemver } from "../lib/utils";
+import { Registry, Util } from "../lib/types/node-red";
 
 /**
  * The required version of the {@link https://github.com/GogoVega/Firebase-Config-Node | Config Node}.
@@ -25,7 +31,7 @@ import { isConfigNodeLoadable, loadInternalNRModule, runUpdateDependencies, tiny
  *
  * @internal
  */
-const requiredVersion = [0, 3, 0];
+const requiredVersion: [number, number, number] = [0, 3, 1];
 
 module.exports = function (RED: NodeAPI) {
 	const status = {
@@ -49,7 +55,7 @@ module.exports = function (RED: NodeAPI) {
 			return;
 
 		try {
-			const { getModuleInfo } = loadInternalNRModule("@node-red/registry");
+			const { getModuleInfo } = loadInternalNRModule<Registry>("@node-red/registry");
 			const configNode = getModuleInfo("@gogovega/firebase-config-node");
 
 			if (configNode) {
@@ -72,7 +78,14 @@ module.exports = function (RED: NodeAPI) {
 			} else {
 				RED.log.error("[firestore:plugin]: Config node NOT registered");
 
-				if (isConfigNodeLoadable(RED)) {
+				let configNodeLoadable = false;
+				try {
+					configNodeLoadable = isConfigNodeLoadable(RED);
+				} catch (error) {
+					RED.log.warn("[firestore:plugin]: " + (error as Error).message);
+				}
+
+				if (configNodeLoadable) {
 					RED.log.warn("[firestore:plugin]: Please restart Node-RED to load the config node");
 					status.loadable = true;
 				} else {
@@ -118,7 +131,7 @@ module.exports = function (RED: NodeAPI) {
 					// For now, we assume that the script can only be triggered once even if it fails.
 					status.updateScriptCalled = true;
 
-					const { exec } = loadInternalNRModule("@node-red/util");
+					const { exec } = loadInternalNRModule<Util>("@node-red/util");
 
 					RED.log.warn("[firestore:plugin]: Starting to update nodes dependencies...");
 
@@ -127,7 +140,7 @@ module.exports = function (RED: NodeAPI) {
 					// TODO: Green with chalk
 					RED.log.info("[firestore:plugin]: Successfully updated nodes dependencies. Please restarts Node-RED.");
 				} else if (scriptName === "load-config-node") {
-					const { addModule } = loadInternalNRModule("@node-red/registry");
+					const { addModule } = loadInternalNRModule<Registry>("@node-red/registry");
 
 					RED.log.warn("[firestore:plugin]: Starting to load the config node...");
 
@@ -172,11 +185,11 @@ module.exports = function (RED: NodeAPI) {
 					}
 				} else if (scriptName === "load-plugins") {
 					// Plugins are not loaded into the editor if installed by Palette Manager. See NR#5277.
-					const { getModuleInfo } = loadInternalNRModule("@node-red/registry");
+					const { getModuleInfo } = loadInternalNRModule<Registry>("@node-red/registry");
 					const info = getModuleInfo("@gogovega/node-red-contrib-cloud-firestore");
 
 					// Notify the editor to load plugins
-					RED.events.emit("runtime-event", { id: "plugin/added", retain: false, payload: info.plugins });
+					RED.events.emit("runtime-event", { id: "plugin/added", retain: false, payload: info?.plugins || [] });
 
 					res.sendStatus(204);
 					return;
