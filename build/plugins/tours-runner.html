@@ -91,7 +91,12 @@
 
 				// Allow the config node checker to run tours
 				plugin.runner = initTourGuide;
-			}
+			},
+			onremove: function () {
+				// Must clean the editor
+				delete plugin.runner;
+				console.log("[firestore:plugin]: Firestore Tours Runner stopped");
+			},
 		};
 
 		RED.plugins.registerPlugin("firestore-tours-runner", plugin);

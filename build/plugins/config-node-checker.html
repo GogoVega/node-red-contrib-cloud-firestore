@@ -269,7 +269,10 @@
 				} else {
 					RED.events.on("flows:loaded", checker);
 				}
-			}
+			},
+			onremove: function () {
+				console.log("[firestore:plugin]: Firestore Config Node Checker stopped");
+			},
 		});
 	})();
 

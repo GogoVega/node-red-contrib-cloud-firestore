@@ -230,5 +230,39 @@ module.exports = function (RED: NodeAPI) {
 			// For new/clean install - called during NR startup
 			RED.events.on("flows:started", checker);
 		},
+		// @ts-expect-error: unknown property
+		onremove: function () {
+			RED.log.debug("[firestore:plugin]: Stopping Firestore Config Node Checker...");
+
+			// TODO: use module.dependencies - bug at NR startup (config node not loaded by the editor)
+			// https://github.com/node-red/node-red/blob/master/packages/node_modules/%40node-red/registry/lib/registry.js#L283
+			const handler = function () {
+				RED.events.off("runtime-event", handler);
+
+				try {
+					if (status.loaded && !isConfigNodeLoadable(RED)) {
+						RED.log.warn("[firestore:plugin]: Starting to remove the config node...");
+
+						const { removeModule } = loadInternalNRModule<Registry>("@node-red/registry");
+						const info = removeModule("@gogovega/firebase-config-node");
+
+						// Notify the editor to remove the node
+						// TODO: BUG? config node definition not removed
+						RED.log.info(RED._("runtime:server.removed-types"));
+						RED.log.info(" - @gogovega/firebase-config-node:firebase-config");
+						RED.events.emit("runtime-event", { id: "node/removed", retain: false, payload: info });
+					} else {
+						RED.log.debug("[firestore:plugin]: Skip removing config node module");
+					}
+				} catch (error) {
+					RED.log.error("[firestore:plugin]: An error occurred while removing config node module: " + error);
+				}
+
+				RED.log.debug("[firestore:plugin]: Firestore Config Node Checker stopped");
+			};
+
+			// Wait for NPM to finish uninstalling this palette
+			RED.events.on("runtime-event", handler);
+		},
 	});
 };
