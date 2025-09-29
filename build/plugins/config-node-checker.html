@@ -18,6 +18,42 @@
 	"use strict";
 
 	(function () {
+		const checker = function () {
+			RED.events.off("flows:loaded", checker);
+			$.getJSON("firebase/firestore/config-node/status", function (result) {
+				if (!result.loaded) {
+					if (result.loadable) {
+						// Ask the user to restart NR
+						generateNotification("restart");
+					} else if (result.updateScriptCalled) {
+						// The user has triggered the Update script but not restarted NR
+						generateNotification("restart-update");
+					} else {
+						// Ask the user to trigger the Update script
+						generateNotification("not-loadable");
+					}
+				} else {
+					if (!RED.nodes.getType("firebase-config")) {
+						// Ask the user to refresh the browser
+						generateNotification("refresh");
+					} else if (result.updateScriptCalled) {
+						// The user has triggered the Update script but not restarted NR
+						generateNotification("restart-update");
+					} else if (!result.versionIsSatisfied) {
+						// Ask the user to trigger the Update script
+						generateNotification("update");
+					} else {
+						// All ready => run the 'First flow' guide
+						const plugin = RED.plugins.getPlugin("firestore-tours-runner");
+
+						if (plugin && typeof plugin.runner === "function") {
+							plugin.runner();
+						}
+					}
+				}
+			});
+		};
+
 		const notify = function (notifications) {
 			if (!Array.isArray(notifications)) {
 				notifications = [notifications];
@@ -124,6 +160,9 @@
 											success: function (resp) {
 												spinner.remove();
 												myNotification.close();
+												FirestoreUI._configNodeLoaded = true;
+												// Re-triggers the checker
+												checker();
 											}
 										});
 									}
@@ -218,50 +257,13 @@
 			name: "Firestore Config Node Checker",
 			description: "Checks if the Firebase config node satisfies the constraints of Firestore nodes",
 			onadd: function () {
-				console.log("[firestore:plugin]: Firestore Config Node Checker started");
-
 				// NR#5276 - avoid to register twice - installation by the Palette Manager
 				if (RED.plugins.getPlugin("firestore-tours-runner")) {
 					console.warn("[firestore:plugin]: Firestore Config Node Checker already registered");
 					return;
 				}
 
-				const checker = function () {
-					$.getJSON("firebase/firestore/config-node/status", function (result) {
-						if (!result.loaded) {
-							if (result.loadable) {
-								// Ask the user to restart NR
-								generateNotification("restart");
-							} else if (result.updateScriptCalled) {
-								// The user has triggered the Update script but not restarted NR
-								generateNotification("restart-update");
-							} else {
-								// Ask the user to trigger the Update script
-								generateNotification("not-loadable");
-							}
-						} else {
-							if (!RED.nodes.getType("firebase-config")) {
-								// Ask the user to refresh the browser
-								generateNotification("refresh");
-							} else if (result.updateScriptCalled) {
-								// The user has triggered the Update script but not restarted NR
-								generateNotification("restart-update");
-							} else if (!result.versionIsSatisfied) {
-								// Ask the user to trigger the Update script
-								generateNotification("update");
-							} else {
-								// All ready => run the 'First flow' guide
-								const plugin = RED.plugins.getPlugin("firestore-tours-runner");
-
-								if (plugin && typeof plugin.runner === "function") {
-									plugin.runner();
-								}
-							}
-						}
-					});
-
-					RED.events.off("flows:loaded", checker);
-				};
+				console.log("[firestore:plugin]: Firestore Config Node Checker started");
 
 				if ($("#red-ui-loading-progress").css("display") === "none") {
 					// Palette installed by the Palette Manager
