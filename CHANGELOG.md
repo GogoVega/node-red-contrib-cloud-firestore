@@ -1,5 +1,11 @@
 # Change log
 
+## 0.2.2
+
+### Fixes
+
+- (editor): Config Node Checker not called after loading the config node (#42)
+
 ## 0.2.1
 
 ### Changes
