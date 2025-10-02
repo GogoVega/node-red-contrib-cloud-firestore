@@ -20,6 +20,7 @@
 	(function () {
 		const checker = function () {
 			RED.events.off("flows:loaded", checker);
+			RED.events.off("registry:node-type-added", checker);
 			$.getJSON("firebase/firestore/config-node/status", function (result) {
 				if (!result.loaded) {
 					if (result.loadable) {
@@ -162,7 +163,7 @@
 												myNotification.close();
 												FirestoreUI._configNodeLoaded = true;
 												// Re-triggers the checker
-												checker();
+												RED.events.on("registry:node-type-added", checker);
 											}
 										});
 									}
