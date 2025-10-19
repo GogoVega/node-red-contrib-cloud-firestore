@@ -13,29 +13,54 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+const GH_BRANCH_REF = (process.env.BRANCH_REF || "").replace(/\//g, "-");
+const PATH_BASE_REF = `github-workflow-${GH_BRANCH_REF}/${process.version.split(".")[0]}/`;
+
+const knownTypes = [
+	"firestore-in",
+	"firestore-get",
+	"firestore-out",
+	"firebase-config",
+	"inject",
+	"debug",
+];
+
+const flow = require("../examples/demo-flow.json")
+	.filter((node) => knownTypes.includes(node.type))
+	.map((node) => {
+		if (node.type === "debug") {
+			// To attach 'should' to the node
+			node.type = "helper";
+		} else if (node.type === "firebase-config") {
+			// To force email/password as auth method
+			node.authType = "email";
+			node.createUser = true;
+		} else if (node.type.startsWith("firestore-")) {
+			// Update the path to allow parallel unit tests
+			if (node.collectionType === "str" && node.collection) {
+				node.collection = PATH_BASE_REF + node.collection;
+			} else if (node.documentType === "str" && node.document) {
+				node.document = PATH_BASE_REF + node.document;
+			}
+		}
+		return node;
+	});
 
 const helper = require("node-red-node-test-helper");
-const flow = require("../examples/demo-flow.json").map((node) => {
-	if (node.type === "debug") {
-		node.type = "helper";
-	} else if (node.type === "firebase-config") {
-		node.authType = "anonymous";
-	}
-	return node;
-});
 const nodes = [
 	require("@gogovega/firebase-config-node"),
 	require("../build/nodes/firestore-in"),
 	require("../build/nodes/firestore-get"),
 	require("../build/nodes/firestore-out"),
 	require("@node-red/nodes/core/common/20-inject.js"),
-	require("@node-red/nodes/core/common/90-comment.js"),
-	require("@node-red/nodes/core/common/91-global-config.js"),
 ];
 
 const creds = {
 	apiKey: process.env.API_KEY,
 	projectId: process.env.PROJECT_ID,
+	// The goal here is to limit the creation of users; one per reference
+	email: `${GH_BRANCH_REF}@github-workflow.fake`,
+	password: "someAwesomePassword4gh-actions"
 };
 
 const { Firestore } = require("../build/lib/firestore-node");
@@ -70,7 +95,7 @@ describe("Demo Flow tests", function () {
 							msg.payload.should.have.property("timestamp");
 							// TODO: why this diff?
 							Math.abs(msg.payload.timestamp - payload.timestamp).should.be.belowOrEqual(10);
-							done();
+							setTimeout(done, 1500);
 						} catch (error) {
 							done(error);
 						}
@@ -88,8 +113,8 @@ describe("Demo Flow tests", function () {
 				const configNode = helper.getNode("e8796a1869e179bc");
 
 				await configNode.clientSignedIn();
-				await configNode.firestore?.modify("delete", { document: "users/alanisawesome" });
-				await configNode.firestore?.modify("delete", { document: "users/steveisapple" });
+				await configNode.firestore?.modify("delete", { document: PATH_BASE_REF +"users/alanisawesome" });
+				await configNode.firestore?.modify("delete", { document: PATH_BASE_REF +"users/steveisapple" });
 				setTimeout(() => {
 					const inject = helper.getNode("ca1a112e5c6cbdb2");
 					const debug = helper.getNode("9acbf29beeba99c3");
@@ -299,7 +324,7 @@ describe("Demo Flow tests", function () {
 				const configNode = helper.getNode("e8796a1869e179bc");
 
 				await configNode.clientSignedIn();
-				await configNode.firestore?.modify("set", { document: "keywords/index" }, { index: 0 });
+				await configNode.firestore?.modify("set", { document: PATH_BASE_REF +"keywords/index" }, { index: 0 });
 
 				setTimeout(() => {
 					const inject = helper.getNode("5395c1e6288eedd1");
@@ -378,7 +403,7 @@ describe("Demo Flow tests", function () {
 				const configNode = helper.getNode("e8796a1869e179bc");
 
 				await configNode.clientSignedIn();
-				await configNode.firestore?.modify("delete", { document: "keywords/some-place" });
+				await configNode.firestore?.modify("delete", { document: PATH_BASE_REF +"keywords/some-place" });
 
 				setTimeout(() => {
 					const inject = helper.getNode("de1b6f4ab2d8b0b4");
@@ -410,7 +435,7 @@ describe("Demo Flow tests", function () {
 				const configNode = helper.getNode("e8796a1869e179bc");
 
 				await configNode.clientSignedIn();
-				await configNode.firestore?.modify("delete", { document: "keywords/foo" });
+				await configNode.firestore?.modify("delete", { document: PATH_BASE_REF +"keywords/foo" });
 
 				setTimeout(() => {
 					const inject = helper.getNode("94c2f365b9a463da");
