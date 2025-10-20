@@ -16,7 +16,7 @@ jobs:
   update:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
     steps:
       - name: Checkout Firebase Tours Repository
         uses: actions/checkout@v4
