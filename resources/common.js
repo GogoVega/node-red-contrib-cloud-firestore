@@ -124,7 +124,7 @@ var FirestoreUI = FirestoreUI || (function () {
 				}
 
 				// NR version
-				const match = /([0-9]+)\.([0-9]+)\.([0-9]+)/.exec(RED.settings.version || "0.0.0");
+				const match = /([0-9]{1,2})\.([0-9]{1,3})\.([0-9]{1,3})-?/.exec(RED.settings.version || "0.0.0");
 				match?.shift();
 
 				// If NR version >= 3.1.3 use the new validators
