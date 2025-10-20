@@ -61,7 +61,7 @@ jobs:
             exit 0
           fi
 
-          export FILENAMES="$(git diff --name-only --cached)"
+          FILENAMES="$(git diff --name-only --cached)"
 
           git commit -m "Update Tours"
           git push origin master
