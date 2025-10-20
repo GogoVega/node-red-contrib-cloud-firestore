@@ -26,7 +26,7 @@ const versionRegex = /requiredVersion: \[number, number, number\] = \[([0-9], [0
 try {
 	console.log("Check if the required Config Node version is up to date...");
 
-	const packageFile = require("../package.json");
+	const packageFile = require("../../package.json");
 	const destinationFilePath = join(__dirname, "../", filePath);
 
 	if (existsSync(destinationFilePath)) {
