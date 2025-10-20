@@ -122,6 +122,13 @@ export class Firestore<Node extends FirestoreNode, Config extends FirestoreConfi
 				node.database = null;
 			}
 		}
+
+		// Allow the node to be reloaded (not a full restart)
+		// @ts-expect-error unknown event
+		node.on("node-reload", () => {
+			node.database = RED.nodes.getNode(config.database) as ConfigNode | null;
+			this.attachStatusListener();
+		});
 	}
 
 	/**
@@ -518,6 +525,9 @@ export class FirestoreIn extends Firestore<FirestoreInNode> {
 
 		// No need to re-check all config - if the node has an input, the config is dynamic.
 		this.isDynamicConfig = this.node.config.inputs === 1;
+
+		// @ts-expect-error unknown event
+		node.on("node-reload", this.subscribe.bind(this));
 	}
 
 	// TODO: Magic filter
