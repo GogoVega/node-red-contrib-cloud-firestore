@@ -2,15 +2,15 @@ name: Tests
 
 on:
   push:
-    paths-ignore:
-      - 'assets/**'
-  pull_request:
     branches:
       - master
       - dev
+    paths-ignore:
+      - 'assets/**'
+  pull_request:
 
 concurrency:
-  group: ${{ github.workflow }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
@@ -20,12 +20,15 @@ jobs:
     permissions:
       actions: read
       contents: read
+    strategy:
+      matrix:
+        node-version: [20, 22, 24]
 
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
       - name: Install dependencies
@@ -42,3 +45,4 @@ jobs:
         env:
           API_KEY: ${{ secrets.API_KEY }}
           PROJECT_ID: ${{ secrets.PROJECT_ID }}
+          BRANCH_REF: ${{ github.ref }}
