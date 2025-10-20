@@ -1,0 +1,72 @@
+name: "Update Tours"
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'resources/**.js'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Firebase Tours Repository
+        uses: actions/checkout@v4
+        with:
+          repository: GogoVega/firebase-tours
+          token: ${{ secrets.GH_TOKEN }}
+
+      - name: Checkout Firestore Repository
+        uses: actions/checkout@v4
+        with:
+          repository: GogoVega/node-red-contrib-cloud-firestore
+          path: _firestore
+          fetch-depth: 1
+
+      - name: Checkout RTDB Repository
+        uses: actions/checkout@v4
+        with:
+          repository: GogoVega/node-red-contrib-firebase-realtime-database
+          path: _rtdb
+          fetch-depth: 1
+
+      - name: Update Firestore Tours
+        run: |
+          rsync -av --exclude='common.js' --exclude='constraints.js' --exclude='config-node.js' _firestore/resources/*.js firestore
+
+      - name: Update RTDB Tours
+        run: |
+          rsync -av --exclude='common.js' --exclude='constraints-container.js' --exclude='migration.js' _rtdb/resources/*.js rtdb
+
+      - name: Commit and Push Changes
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+          git add firestore/.
+          git add rtdb/.
+
+          if git diff --cached --quiet; then
+            echo "⏩ No changes detected, nothing to push ⏩"
+            echo "### Update Status ⏩" >> $GITHUB_STEP_SUMMARY
+            echo "No changes detected, nothing to push" >> $GITHUB_STEP_SUMMARY
+            exit 0
+          fi
+
+          export FILENAMES="$(git diff --name-only --cached)"
+
+          git commit -m "Update Tours"
+          git push origin master
+
+          echo "✅ Changes detected ✅"
+          echo "### Update Status ✅" >> $GITHUB_STEP_SUMMARY
+          echo "#### Summary of modified files" >> $GITHUB_STEP_SUMMARY
+          echo "$FILENAMES" >> $GITHUB_STEP_SUMMARY
