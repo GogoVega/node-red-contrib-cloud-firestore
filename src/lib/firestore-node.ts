@@ -434,6 +434,7 @@ export class Firestore<Node extends FirestoreNode, Config extends FirestoreConfi
 	 * @param time If defined, the status will be cleared (to current status) after `time` ms.
 	 */
 	protected setStatus(status: string = "", time?: number) {
+		this.node.debug(`Set node status to: ${status}${time ? " for " + time + "s" : ""}`);
 		// Clear the status to the current after ms
 		if (status && time) {
 			clearTimeout(this.errorTimeoutID);
@@ -485,13 +486,21 @@ export class FirestoreGet extends Firestore<FirestoreGetNode> {
 
 		(async () => {
 			try {
-				if (!this.firestore) return done();
+				if (!this.firestore) {
+					this.node.debug("Ignore incoming messages due to idle mode");
+					done();
+					return;
+				}
 
 				this.setStatus("Querying");
 
 				const queryConfig = await this.getQueryConfig(msg);
 
-				if (!(await this.node.database?.clientSignedIn())) return done();
+				if (!(await this.node.database?.clientSignedIn())) {
+					this.node.debug("Ignore incoming messages due to client not signed in");
+					done();
+					return;
+				}
 
 				const snapshot = await this.firestore.get(queryConfig);
 
@@ -559,6 +568,7 @@ export class FirestoreIn extends Firestore<FirestoreInNode> {
 		(async () => {
 			try {
 				if (!this.firestore) {
+					this.node.debug("Ignore incoming messages due to idle mode");
 					if (done) done();
 					return;
 				}
@@ -581,6 +591,7 @@ export class FirestoreIn extends Firestore<FirestoreInNode> {
 				// Await the filter defined in the incoming message
 				this._filter = this.getFilter(msg);
 				if (this._filter === "msg" || (this.isDynamicConfig && !msg)) {
+					this.node.debug("Ignore the static subscription and wait for the incoming message");
 					if (done) done();
 					return;
 				}
@@ -588,6 +599,7 @@ export class FirestoreIn extends Firestore<FirestoreInNode> {
 				const config = await this.getQueryConfig(msg);
 
 				if (!(await this.node.database?.clientSignedIn())) {
+					this.node.debug("Ignore incoming messages due to client not signed in");
 					if (done) done();
 					return;
 				}
@@ -663,7 +675,11 @@ export class FirestoreOut extends Firestore<FirestoreOutNode> {
 	public modify(msg: IncomingMessage, done: (error?: Error) => void): void {
 		(async () => {
 			try {
-				if (!this.firestore) return done();
+				if (!this.firestore) {
+					this.node.debug("Ignore incoming messages due to idle mode");
+					done();
+					return;
+				}
 
 				this.setStatus("Querying");
 
@@ -672,7 +688,11 @@ export class FirestoreOut extends Firestore<FirestoreOutNode> {
 				const config = await this.getQueryConfig(msg);
 				const options = this.getQueryOptions(msg);
 
-				if (!(await this.node.database?.clientSignedIn())) return done();
+				if (!(await this.node.database?.clientSignedIn())) {
+					this.node.debug("Ignore incoming messages due to client not signed in");
+					done();
+					return;
+				}
 
 				switch (method) {
 					case "update":
