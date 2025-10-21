@@ -27,7 +27,7 @@ try {
 	console.log("Check if the required Config Node version is up to date...");
 
 	const packageFile = require("../../package.json");
-	const destinationFilePath = join(__dirname, "../", filePath);
+	const destinationFilePath = join(__dirname, "..", "..", filePath);
 
 	if (existsSync(destinationFilePath)) {
 		const destinationFile = readFileSync(destinationFilePath, { encoding: "utf8" });
