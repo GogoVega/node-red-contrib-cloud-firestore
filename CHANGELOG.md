@@ -1,5 +1,18 @@
 # Change log
 
+## 0.2.3
+
+### Fixes
+
+- Grammar in the `demo-flow` example (https://github.com/GogoVega/node-red-contrib-cloud-firestore/commit/510634a327471e126a02406abfb2f4e8b1d402dc)
+- (editor): Checker is triggered too soon after loading config node (#44)
+- Reload Firebase nodes after missing types startup (#49) (https://github.com/GogoVega/node-red-contrib-cloud-firestore/commit/be9ba6ad0f618ce11b631e12c72e204f0687581e)
+
+### Improves
+
+- Update the NR version regex to be more strict (#49) (https://github.com/GogoVega/node-red-contrib-cloud-firestore/commit/fbb279eb1ffa08982b49379ef66deabe952ae2a9)
+- Add some debug messages to message processing (#49) (https://github.com/GogoVega/node-red-contrib-cloud-firestore/commit/5529c5ab5a9625d396ed17e21d601d7c4b271707)
+
 ## 0.2.2
 
 ### Fixes
