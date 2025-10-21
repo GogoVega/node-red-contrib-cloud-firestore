@@ -13,7 +13,6 @@ jobs:
   publish-npm:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
       id-token: write
     steps:
       - name: Checkout repository
@@ -22,7 +21,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 24
 
       - name: Install Dependencies
         run: npm ci
@@ -38,6 +37,8 @@ jobs:
         uses: JS-DevTools/npm-publish@v4
         with:
           access: public
+          ignore-scripts: true
+          provenance: true
           tag: ${{ contains(github.ref, '-beta') && 'beta' || contains(github.ref, '-alpha') && 'alpha' || 'latest' }}
 
   # TODO: Use a webhook because sleep is not ideal
